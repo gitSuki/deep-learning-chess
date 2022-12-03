@@ -1,8 +1,32 @@
 import pygame as pg
 
+pg.init()
 GRID_SIZE = 512
 SQUARE_SIZE = GRID_SIZE // 8
 IMAGES = {}
+
+
+def load_images():
+    image_list = [
+        "w_pawn",
+        "b_pawn",
+        "w_rook",
+        "b_rook",
+        "w_knight",
+        "b_knight",
+        "w_bishop",
+        "b_bishop",
+        "w_queen",
+        "b_queen",
+        "w_king",
+        "b_king",
+    ]
+
+    for chess_piece_image in image_list:
+        IMAGES[chess_piece_image] = pg.transform.scale(
+            pg.image.load(f"./assets/{chess_piece_image}.png"),
+            (SQUARE_SIZE, SQUARE_SIZE),
+        )
 
 
 class GameState:
