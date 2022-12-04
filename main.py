@@ -1,4 +1,5 @@
 import pygame as pg
+import game_engine as engine
 
 pg.init()
 GRID_SIZE = 512
@@ -31,116 +32,11 @@ def load_images():
         )
 
 
-class GameState:
-    def __init__(self):
-        self.turn = "white"
-        self.move_log = []
-
-        # board is a 2d list representation of an 8x8 chess board
-        self.board = [
-            [
-                "b_rook",
-                "b_knight",
-                "b_bishop",
-                "b_queen",
-                "b_king",
-                "b_bishop",
-                "b_knight",
-                "b_rook",
-            ],
-            [
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-            ],
-            [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-            ],
-            [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-            ],
-            [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-            ],
-            [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-            ],
-            [
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-            ],
-            [
-                "w_rook",
-                "w_knight",
-                "w_bishop",
-                "w_queen",
-                "w_king",
-                "w_bishop",
-                "w_knight",
-                "w_rook",
-            ],
-        ]
-
-    def execute_move(self, move):
-        self.board[move.start_square[0]][move.start_square[1]] = "open"
-        self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
-        self.move_log.append(move)
-        self.turn = "black" if self.turn == "white" else "white"
-
-
-class Movement:
-    def __init__(self, start_square, end_square, board):
-        self.start_square = start_square
-        self.end_square = end_square
-        self.moved_piece = board[self.start_square[0]][self.start_square[1]]
-        self.captured_piece = board[self.end_square[0]][self.end_square[1]]
-        self.board = board
-
-
 def main():
     screen = pg.display.set_mode((GRID_SIZE, GRID_SIZE))
     clock = pg.time.Clock()
     screen.fill(pg.Color("white"))
-    game_state = GameState()
+    game_state = engine.GameState()
     load_images()
 
     selected_square = ()  # tuple to represent (row, col) of last selected square
@@ -166,7 +62,9 @@ def main():
                     select_log.append(selected_square)
 
                 if len(select_log) >= 2:
-                    move = Movement(select_log[0], select_log[1], game_state.board)
+                    move = engine.Movement(
+                        select_log[0], select_log[1], game_state.board
+                    )
                     game_state.execute_move(move)
                     selected_square = ()
                     select_log = []
