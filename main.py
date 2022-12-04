@@ -128,11 +128,28 @@ def main():
     game_state = GameState()
     load_images()
 
+    selected_square = ()  # tuple to represent (row, col) of last selected square
+    select_log = []
+
     is_running = True
     while is_running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
+            elif e.type == pg.MOUSEBUTTONDOWN:
+                location = pg.mouse.get_pos()  # (x, y) location of mouse
+                row = location[0] // SQUARE_SIZE
+                col = location[1] // SQUARE_SIZE
+
+                was_already_selected = selected_square == (row, col)
+                if was_already_selected:
+                    selected_square = ()
+                    select_log = []
+                else:
+                    selected_square = (row, col)
+                    select_log.append(selected_square)
+
+                print(select_log)
         draw_game_state(screen, game_state)
         clock.tick(FPS)
         pg.display.flip()
