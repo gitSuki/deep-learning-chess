@@ -162,7 +162,19 @@ def draw_board(screen):
 
 
 def draw_pieces(screen, game_state):
-    pass
+    """
+    Draws all the chess pieces on the board using based on the current game_state.
+    """
+    for row in range(GRID_DIMENSION):
+        for col in range(GRID_DIMENSION):
+            piece = game_state.board[row][col]
+            if piece != "open":
+                screen.blit(
+                    IMAGES[piece],
+                    pg.Rect(
+                        col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
+                    ),
+                )
 
 
 if __name__ == "__main__":
