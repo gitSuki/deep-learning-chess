@@ -2,7 +2,8 @@ import pygame as pg
 
 pg.init()
 GRID_SIZE = 512
-SQUARE_SIZE = GRID_SIZE // 8
+GRID_DIMENSION = 8
+SQUARE_SIZE = GRID_SIZE // GRID_DIMENSION
 FPS = 15
 IMAGES = {}
 
@@ -128,12 +129,40 @@ def main():
     load_images()
 
     is_running = True
-    while running:
+    while is_running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
-                running = False
+                is_running = False
+        draw_game_state(screen, game_state)
         clock.tick(FPS)
         pg.display.flip()
+
+
+def draw_game_state(screen, game_state):
+    draw_board(screen)
+    draw_pieces(screen, game_state)
+
+
+def draw_board(screen):
+    """
+    Draws all the background squares on the board. The top left square is always light and the colors alternate between light and dark.
+    """
+    for row in range(GRID_DIMENSION):
+        for col in range(GRID_DIMENSION):
+            location_is_even = (row + col) % 2
+            if location_is_even:
+                color = pg.Color("white")
+            else:
+                color = pg.Color("gray")
+            pg.draw.rect(
+                screen,
+                color,
+                pg.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE),
+            )
+
+
+def draw_pieces(screen, game_state):
+    pass
 
 
 if __name__ == "__main__":
