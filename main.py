@@ -33,7 +33,7 @@ def load_images():
 
 class GameState:
     def __init__(self):
-        self.turn = "WHITE"
+        self.turn = "white"
         self.move_log = []
 
         # board is a 2d list representation of an 8x8 chess board
@@ -120,6 +120,21 @@ class GameState:
             ],
         ]
 
+    def execute_move(self, move):
+        self.board[move.start_square[0]][move.start_square[1]] = "open"
+        self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
+        self.move_log.append(move)
+        self.turn = "black" if self.turn == "white" else "white"
+
+
+class Movement:
+    def __init__(self, start_square, end_square, board):
+        self.start_square = start_square
+        self.end_square = end_square
+        self.moved_piece = board[self.start_square[0]][self.start_square[1]]
+        self.captured_piece = board[self.end_square[0]][self.end_square[1]]
+        self.board = board
+
 
 def main():
     screen = pg.display.set_mode((GRID_SIZE, GRID_SIZE))
@@ -138,18 +153,24 @@ def main():
                 is_running = False
             elif e.type == pg.MOUSEBUTTONDOWN:
                 location = pg.mouse.get_pos()  # (x, y) location of mouse
-                row = location[0] // SQUARE_SIZE
-                col = location[1] // SQUARE_SIZE
+                row = location[1] // SQUARE_SIZE
+                col = location[0] // SQUARE_SIZE
 
                 was_already_selected = selected_square == (row, col)
                 if was_already_selected:
+                    # prevents the user from being able to move their piece to the same square it started on
                     selected_square = ()
                     select_log = []
                 else:
                     selected_square = (row, col)
                     select_log.append(selected_square)
 
-                print(select_log)
+                if len(select_log) >= 2:
+                    move = Movement(select_log[0], select_log[1], game_state.board)
+                    game_state.execute_move(move)
+                    selected_square = ()
+                    select_log = []
+
         draw_game_state(screen, game_state)
         clock.tick(FPS)
         pg.display.flip()
