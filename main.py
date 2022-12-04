@@ -3,6 +3,7 @@ import pygame as pg
 pg.init()
 GRID_SIZE = 512
 SQUARE_SIZE = GRID_SIZE // 8
+FPS = 15
 IMAGES = {}
 
 
@@ -119,4 +120,21 @@ class GameState:
         ]
 
 
-test = GameState()
+def main():
+    screen = pg.display.set_mode((GRID_SIZE, GRID_SIZE))
+    clock = pg.time.Clock()
+    screen.fill(pg.Color("white"))
+    game_state = GameState()
+    load_images()
+
+    is_running = True
+    while running:
+        for e in pg.event.get():
+            if e.type == pg.QUIT:
+                running = False
+        clock.tick(FPS)
+        pg.display.flip()
+
+
+if __name__ == "__main__":
+    main()
