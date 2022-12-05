@@ -89,9 +89,9 @@ class GameState:
 
     def swap_player_turn(self):
         self.turn = "black" if self.turn == "white" else "white"
-        print(self.turn)
 
     def execute_move(self, move):
+        self.get_possible_moves()
         self.board[move.start_square[0]][move.start_square[1]] = "open"
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
@@ -109,6 +109,17 @@ class GameState:
             most_recent_move.start_square[1]
         ] = most_recent_move.moved_piece
         self.swap_player_turn()
+
+    def get_possible_moves(self):
+        possible_moves = []
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
+                square_owner = self.board[row][col][0]
+                square_piece = self.board[row][col][2:]
+                if square_owner == "w" and self.turn == "white":
+                    pass
+                elif square_owner == "b" and self.turn == "black":
+                    pass
 
 
 class Movement:
