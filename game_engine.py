@@ -91,7 +91,6 @@ class GameState:
         self.turn = "black" if self.turn == "white" else "white"
 
     def execute_move(self, move):
-        self.get_possible_moves()
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
@@ -111,7 +110,7 @@ class GameState:
         self.swap_player_turn()
 
     def get_possible_moves(self):
-        possible_moves = []
+        possible_moves = [Movement((6, 0), (5, 0), self.board)]
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 if self.board[row][col] == None:
@@ -145,6 +144,7 @@ class GameState:
                         pass
                     elif piece == "king":
                         pass
+        return possible_moves
 
 
 class Movement:

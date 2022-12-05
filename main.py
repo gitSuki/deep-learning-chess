@@ -15,7 +15,9 @@ def main():
     clock = pg.time.Clock()
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
-
+    legal_moves = game_state.get_possible_moves()
+    game_state_has_changed = False # used to recalculate legal moves any time the board changes
+    
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
 
@@ -28,6 +30,7 @@ def main():
             elif e.type == pg.KEYDOWN:
                 if e.key == pg.K_z:
                     game_state.undo_move()
+                    game_state_has_changed = True
 
             elif e.type == pg.MOUSEBUTTONDOWN:
                 location = pg.mouse.get_pos()  # (x, y) location of mouse
@@ -47,9 +50,15 @@ def main():
                     move = engine.Movement(
                         select_log[0], select_log[1], game_state.board
                     )
-                    game_state.execute_move(move)
+                    if move in legal_moves:
+                        game_state.execute_move(move)
+                        game_state_has_changed = True
                     selected_square = ()
                     select_log = []
+
+        if game_state_has_changed:
+            legal_moves = game_state.get_possible_moves()
+            game_state_has_changed = False
 
         gui.draw_game_state(screen, game_state, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
         clock.tick(FPS)
