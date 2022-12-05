@@ -23,7 +23,6 @@ def load_images(square_size):
             pg.image.load(f"./assets/{chess_piece_image}.png"),
             (square_size, square_size),
         )
-    print(images_dict)
     return images_dict
 
 
@@ -57,7 +56,7 @@ def draw_pieces(screen, game_state, images, grid_dimension, square_size):
     for row in range(grid_dimension):
         for col in range(grid_dimension):
             piece = game_state.board[row][col]
-            if piece != "open":
+            if piece:
                 screen.blit(
                     images[piece],
                     pg.Rect(

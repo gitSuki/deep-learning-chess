@@ -26,44 +26,44 @@ class GameState:
                 "b_pawn",
             ],
             [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
             ],
             [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
             ],
             [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
             ],
             [
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
-                "open",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
             ],
             [
                 "w_pawn",
@@ -92,7 +92,7 @@ class GameState:
 
     def execute_move(self, move):
         self.get_possible_moves()
-        self.board[move.start_square[0]][move.start_square[1]] = "open"
+        self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
         self.swap_player_turn()
@@ -114,6 +114,9 @@ class GameState:
         possible_moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
+                if self.board[row][col] == None:
+                    continue
+
                 square_owner = self.board[row][col][0]
                 square_piece = self.board[row][col][2:]
                 if square_owner == "w" and self.turn == "white":
