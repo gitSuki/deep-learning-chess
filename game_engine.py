@@ -110,7 +110,7 @@ class GameState:
         self.swap_player_turn()
 
     def get_possible_moves(self):
-        possible_moves = [Movement((6, 0), (5, 0), self.board)]
+        possible_moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 if self.board[row][col] == None:
@@ -153,3 +153,13 @@ class Movement:
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
+
+    def __eq__(self, other):
+        if not isinstance(other, Movement):
+            return False
+        return (
+            self.start_square == other.start_square
+            and self.end_square == other.end_square
+            and self.moved_piece == other.moved_piece
+            and self.captured_piece == other.captured_piece
+        )

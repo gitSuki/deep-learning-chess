@@ -16,8 +16,10 @@ def main():
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
     legal_moves = game_state.get_possible_moves()
-    game_state_has_changed = False # used to recalculate legal moves any time the board changes
-    
+    game_state_has_changed = (
+        False  # used to recalculate legal moves any time the board changes
+    )
+
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
 
