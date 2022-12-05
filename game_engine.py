@@ -89,7 +89,7 @@ class GameState:
 
     def swap_player_turn(self):
         self.turn = "black" if self.turn == "white" else "white"
-        print(self.swap_player_turn)
+        print(self.turn)
 
     def execute_move(self, move):
         self.board[move.start_square[0]][move.start_square[1]] = "open"
