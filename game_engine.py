@@ -87,11 +87,15 @@ class GameState:
             ],
         ]
 
+    def swap_player_turn(self):
+        self.turn = "black" if self.turn == "white" else "white"
+        print(self.swap_player_turn)
+
     def execute_move(self, move):
         self.board[move.start_square[0]][move.start_square[1]] = "open"
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
-        self.turn = "black" if self.turn == "white" else "white"
+        self.swap_player_turn()
 
     def undo_move(self):
         if len(self.move_log) == 0:
@@ -104,7 +108,7 @@ class GameState:
         self.board[most_recent_move.start_square[0]][
             most_recent_move.start_square[1]
         ] = most_recent_move.moved_piece
-        self.turn = "black" if self.turn == "white" else "white"
+        self.swap_player_turn()
 
 
 class Movement:
