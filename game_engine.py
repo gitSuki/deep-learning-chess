@@ -93,6 +93,19 @@ class GameState:
         self.move_log.append(move)
         self.turn = "black" if self.turn == "white" else "white"
 
+    def undo_move(self):
+        if len(self.move_log) == 0:
+            return
+
+        most_recent_move = self.move_log.pop()
+        self.board[most_recent_move.end_square[0]][
+            most_recent_move.end_square[1]
+        ] = most_recent_move.captured_piece
+        self.board[most_recent_move.start_square[0]][
+            most_recent_move.start_square[1]
+        ] = most_recent_move.moved_piece
+        self.turn = "black" if self.turn == "white" else "white"
+
 
 class Movement:
     def __init__(self, start_square, end_square, board):
@@ -100,4 +113,3 @@ class Movement:
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
-        self.board = board

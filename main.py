@@ -47,6 +47,8 @@ def main():
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
+            elif e.type == pg.KEYDOWN:
+                game_state.undo_move()
             elif e.type == pg.MOUSEBUTTONDOWN:
                 location = pg.mouse.get_pos()  # (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
