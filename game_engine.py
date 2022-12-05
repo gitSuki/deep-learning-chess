@@ -117,12 +117,34 @@ class GameState:
                 if self.board[row][col] == None:
                     continue
 
-                square_owner = self.board[row][col][0]
-                square_piece = self.board[row][col][2:]
-                if square_owner == "w" and self.turn == "white":
-                    pass
-                elif square_owner == "b" and self.turn == "black":
-                    pass
+                controller = self.board[row][col][0]
+                piece = self.board[row][col][2:]
+                if controller == "w" and self.turn == "white":
+                    if piece == "pawn":
+                        pass
+                    elif piece == "rook":
+                        pass
+                    elif piece == "knight":
+                        pass
+                    elif piece == "bishop":
+                        pass
+                    elif piece == "queen":
+                        pass
+                    elif piece == "king":
+                        pass
+                elif controller == "b" and self.turn == "black":
+                    if piece == "pawn":
+                        pass
+                    elif piece == "rook":
+                        pass
+                    elif piece == "knight":
+                        pass
+                    elif piece == "bishop":
+                        pass
+                    elif piece == "queen":
+                        pass
+                    elif piece == "king":
+                        pass
 
 
 class Movement:
