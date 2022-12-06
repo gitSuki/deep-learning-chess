@@ -2,6 +2,14 @@ class GameState:
     def __init__(self) -> None:
         self.turn = "white"
         self.move_log = []
+        self.move_methods = {
+            "pawn": self.get_pawn_moves,
+            "rook": self.get_rook_moves,
+            "knight": self.get_knight_moves,
+            "bishop": self.get_bishop_moves,
+            "queen": self.get_queen_moves,
+            "king": self.get_king_moves,
+        }
 
         # board is a 2d list representation of an 8x8 chess board
         self.board = [
@@ -118,32 +126,15 @@ class GameState:
 
                 controller = self.board[row][col][0]
                 piece = self.board[row][col][2:]
-                if controller == "w" and self.turn == "white":
-                    if piece == "pawn":
-                        possible_moves += self.get_pawn_moves(row, col)
-                    elif piece == "rook":
-                        pass
-                    elif piece == "knight":
-                        pass
-                    elif piece == "bishop":
-                        pass
-                    elif piece == "queen":
-                        pass
-                    elif piece == "king":
-                        pass
-                elif controller == "b" and self.turn == "black":
-                    if piece == "pawn":
-                        possible_moves += self.get_pawn_moves(row, col)
-                    elif piece == "rook":
-                        pass
-                    elif piece == "knight":
-                        pass
-                    elif piece == "bishop":
-                        pass
-                    elif piece == "queen":
-                        pass
-                    elif piece == "king":
-                        pass
+
+                if (
+                    controller == "w"
+                    and self.turn == "white"
+                    or controller == "b"
+                    and self.turn == "black"
+                ):
+                    possible_moves += self.move_methods[piece](row, col)
+
         return possible_moves
 
     def get_pawn_moves(self, row: int, col: int) -> list:
@@ -203,6 +194,21 @@ class GameState:
                             Movement((row, col), (row + 1, col - 1), self.board)
                         )
         return possible_moves
+
+    def get_rook_moves(self, row: int, col: int) -> list:
+        return []
+
+    def get_knight_moves(self, row: int, col: int) -> list:
+        return []
+
+    def get_bishop_moves(self, row: int, col: int) -> list:
+        return []
+
+    def get_queen_moves(self, row: int, col: int) -> list:
+        return []
+
+    def get_king_moves(self, row: int, col: int) -> list:
+        return []
 
 
 class Movement:
