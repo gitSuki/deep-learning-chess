@@ -196,7 +196,19 @@ class GameState:
         return possible_moves
 
     def get_rook_moves(self, row: int, col: int) -> list:
-        return []
+        possible_moves = []
+
+        # moving up
+        for i in range(row - 1, -1, -1):
+            # stops if runs into another piece
+            if self.board[i][col]:
+                if self.board[i][col][0] == "b":
+                    possible_moves.append(Movement((row, col), (i, col), self.board))
+                break
+
+            possible_moves.append(Movement((row, col), (i, col), self.board))
+
+        return possible_moves
 
     def get_knight_moves(self, row: int, col: int) -> list:
         return []
