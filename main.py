@@ -10,7 +10,7 @@ FPS = 15
 IMAGES = gui.load_images(SQUARE_SIZE)
 
 
-def main():
+def main() -> None:
     screen = pg.display.set_mode((GRID_SIZE, GRID_SIZE))
     clock = pg.time.Clock()
     screen.fill(pg.Color("white"))

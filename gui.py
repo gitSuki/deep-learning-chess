@@ -1,7 +1,7 @@
 import pygame as pg
 
 
-def load_images(square_size):
+def load_images(square_size: int) -> list:
     images_dict = {}
     image_list = [
         "w_pawn",
@@ -26,12 +26,18 @@ def load_images(square_size):
     return images_dict
 
 
-def draw_game_state(screen, game_state, images, grid_dimension, square_size):
+def draw_game_state(
+    screen: object,
+    game_state: object,
+    images: list,
+    grid_dimension: int,
+    square_size: int,
+) -> None:
     draw_board(screen, grid_dimension, square_size)
     draw_pieces(screen, game_state, images, grid_dimension, square_size)
 
 
-def draw_board(screen, grid_dimension, square_size):
+def draw_board(screen: object, grid_dimension: int, square_size: int):
     """
     Draws all the background squares on the board. The top left square is always light and the colors alternate between light and dark.
     """
@@ -49,7 +55,13 @@ def draw_board(screen, grid_dimension, square_size):
             )
 
 
-def draw_pieces(screen, game_state, images, grid_dimension, square_size):
+def draw_pieces(
+    screen: object,
+    game_state: object,
+    images: list,
+    grid_dimension: int,
+    square_size: int,
+):
     """
     Draws all the chess pieces on the board using based on the current game_state.
     """

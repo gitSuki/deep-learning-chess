@@ -1,5 +1,5 @@
 class GameState:
-    def __init__(self):
+    def __init__(self) -> None:
         self.turn = "white"
         self.move_log = []
 
@@ -90,13 +90,13 @@ class GameState:
     def swap_player_turn(self):
         self.turn = "black" if self.turn == "white" else "white"
 
-    def execute_move(self, move):
+    def execute_move(self, move: object) -> None:
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
         self.swap_player_turn()
 
-    def undo_move(self):
+    def undo_move(self) -> None:
         if len(self.move_log) == 0:
             return
 
@@ -109,7 +109,7 @@ class GameState:
         ] = most_recent_move.moved_piece
         self.swap_player_turn()
 
-    def get_possible_moves(self):
+    def get_possible_moves(self) -> list:
         possible_moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
@@ -148,7 +148,7 @@ class GameState:
 
 
 class Movement:
-    def __init__(self, start_square, end_square, board):
+    def __init__(self, start_square: tuple, end_square: tuple, board: list) -> None:
         self.start_square = start_square
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
