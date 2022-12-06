@@ -158,6 +158,20 @@ class GameState:
                     possible_moves.append(
                         Movement((row, col), (row - 2, col), self.board)
                     )
+            # capture to the left
+            if col - 1 >= 0:
+                piece_exists = self.board[row - 1][col - 1]
+                if piece_exists and self.board[row - 1][col - 1][0] == "b":
+                    possible_moves.append(
+                        Movement((row, col), (row - 1, col - 1), self.board)
+                    )
+            # capture to the right
+            if col + 1 < len(self.board[row]):
+                piece_exists = self.board[row - 1][col + 1]
+                if piece_exists and self.board[row - 1][col + 1][0] == "b":
+                    possible_moves.append(
+                        Movement((row, col), (row - 1, col + 1), self.board)
+                    )
         return possible_moves
 
 
