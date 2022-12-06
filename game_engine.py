@@ -133,7 +133,7 @@ class GameState:
                         pass
                 elif controller == "b" and self.turn == "black":
                     if piece == "pawn":
-                        pass
+                        possible_moves += self.get_pawn_moves(row, col)
                     elif piece == "rook":
                         pass
                     elif piece == "knight":
@@ -149,6 +149,7 @@ class GameState:
     def get_pawn_moves(self, row: int, col: int) -> list:
         possible_moves = []
         if self.turn == "white":
+            # move forward
             if not self.board[row - 1][col]:
                 possible_moves.append(Movement((row, col), (row - 1, col), self.board))
                 # pawns can move two squares directly forward on their first move
@@ -171,6 +172,33 @@ class GameState:
                 if piece_exists and self.board[row - 1][col + 1][0] == "b":
                     possible_moves.append(
                         Movement((row, col), (row - 1, col + 1), self.board)
+                    )
+        
+        
+        if self.turn == "black":
+            # move forward
+            if not self.board[row + 1][col]:
+                possible_moves.append(Movement((row, col), (row + 1, col), self.board))
+                # pawns can move two squares directly forward on their first move
+                # pawns can never move backward so they will always be at their starting row
+                # if they haven't moved
+                if row == 1 and not self.board[row + 2][col]:
+                    possible_moves.append(
+                        Movement((row, col), (row + 2, col), self.board)
+                    )
+            # capture to the left
+            if col + 1 < len(self.board[row]):
+                piece_exists = self.board[row + 1][col + 1]
+                if piece_exists and self.board[row + 1][col + 1][0] == "w":
+                    possible_moves.append(
+                        Movement((row, col), (row + 1, col + 1), self.board)
+                    )
+            # capture to the right
+            if col - 1 >= 0:
+                piece_exists = self.board[row + 1][col - 1]
+                if piece_exists and self.board[row + 1][col - 1][0] == "w":
+                    possible_moves.append(
+                        Movement((row, col), (row + 1, col - 1), self.board)
                     )
         return possible_moves
 
