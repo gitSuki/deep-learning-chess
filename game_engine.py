@@ -34,16 +34,6 @@ class GameState:
                 "b_pawn",
             ],
             [
-                "w_rook",
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            [
                 None,
                 None,
                 None,
@@ -59,6 +49,16 @@ class GameState:
                 None,
                 None,
                 None,
+                None,
+                None,
+                None,
+            ],
+            [
+                None,
+                None,
+                None,
+                None,
+                "w_bishop",
                 None,
                 None,
                 None,
@@ -241,7 +241,7 @@ class GameState:
                 break
 
             possible_moves.append(Movement((row, col), (row, i), self.board))
-        
+
         # moving right
         for i in range(col + 1, len(self.board) - 1):
             # stops if runs into another piece
@@ -263,7 +263,24 @@ class GameState:
         return []
 
     def get_bishop_moves(self, row: int, col: int) -> list:
-        return []
+        possible_moves = []
+
+        # moving down-right
+        for new_row in range(row + 1, len(self.board) - 1):
+            new_col = col + (new_row - row)
+            if self.board[new_row][new_col]:
+                if (
+                    self.board[new_row][new_col][0] == "w"
+                    and self.turn == "black"
+                    or self.board[new_row][new_col][0] == "b"
+                    and self.turn == "white"
+                ):
+                    possible_moves.append(Movement((row, col), (new_row, new_col), self.board))
+                break
+
+            possible_moves.append(Movement((row, col), (new_row, new_col), self.board))
+
+        return possible_moves
 
     def get_queen_moves(self, row: int, col: int) -> list:
         return []
