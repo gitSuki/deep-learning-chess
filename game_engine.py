@@ -120,7 +120,7 @@ class GameState:
                 piece = self.board[row][col][2:]
                 if controller == "w" and self.turn == "white":
                     if piece == "pawn":
-                        pass
+                        possible_moves += self.get_pawn_moves(row, col)
                     elif piece == "rook":
                         pass
                     elif piece == "knight":
@@ -144,6 +144,13 @@ class GameState:
                         pass
                     elif piece == "king":
                         pass
+
+    def get_pawn_moves(self, row: int, col: int) -> list:
+        possible_moves = []
+        if self.turn == "white":
+            if not self.board[row - 1][col]:
+                possible_moves.append(Movement((row, col), (row - 1, col), self.board))
+
         return possible_moves
 
 
