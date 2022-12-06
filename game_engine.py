@@ -34,7 +34,7 @@ class GameState:
                 "b_pawn",
             ],
             [
-                None,
+                "w_rook",
                 None,
                 None,
                 None,
@@ -226,6 +226,36 @@ class GameState:
                 break
 
             possible_moves.append(Movement((row, col), (i, col), self.board))
+
+        # moving left
+        for i in range(col - 1, -1, -1):
+            # stops if runs into another piece
+            if self.board[row][i]:
+                if (
+                    self.board[row][i][0] == "w"
+                    and self.turn == "black"
+                    or self.board[row][i][0] == "b"
+                    and self.turn == "white"
+                ):
+                    possible_moves.append(Movement((row, col), (row, i), self.board))
+                break
+
+            possible_moves.append(Movement((row, col), (row, i), self.board))
+        
+        # moving right
+        for i in range(col + 1, len(self.board) - 1):
+            # stops if runs into another piece
+            if self.board[row][i]:
+                if (
+                    self.board[row][i][0] == "w"
+                    and self.turn == "black"
+                    or self.board[row][i][0] == "b"
+                    and self.turn == "white"
+                ):
+                    possible_moves.append(Movement((row, col), (row, i), self.board))
+                break
+
+            possible_moves.append(Movement((row, col), (row, i), self.board))
 
         return possible_moves
 
