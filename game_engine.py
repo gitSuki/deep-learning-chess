@@ -198,6 +198,15 @@ class GameState:
     def get_rook_moves(self, row: int, col: int) -> list:
         possible_moves = []
 
+        # moving down
+        for i in range(row + 1, len(self.board) - 1):
+            if self.board[i][col]:
+                if self.board[i][col][0] == "w":
+                    possible_moves.append(Movement((row, col), (i, col), self.board))
+                break
+
+            possible_moves.append(Movement((row, col), (i, col), self.board))
+
         # moving up
         for i in range(row - 1, -1, -1):
             # stops if runs into another piece
