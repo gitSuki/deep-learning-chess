@@ -144,13 +144,20 @@ class GameState:
                         pass
                     elif piece == "king":
                         pass
+        return possible_moves
 
     def get_pawn_moves(self, row: int, col: int) -> list:
         possible_moves = []
         if self.turn == "white":
             if not self.board[row - 1][col]:
                 possible_moves.append(Movement((row, col), (row - 1, col), self.board))
-
+                # pawns can move two squares directly forward on their first move
+                # pawns can never move backward so they will always be at their starting row
+                # if they haven't moved
+                if row == 6 and not self.board[row - 2][col]:
+                    possible_moves.append(
+                        Movement((row, col), (row - 2, col), self.board)
+                    )
         return possible_moves
 
 
