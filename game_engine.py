@@ -275,7 +275,26 @@ class GameState:
                     or self.board[new_row][new_col][0] == "b"
                     and self.turn == "white"
                 ):
-                    possible_moves.append(Movement((row, col), (new_row, new_col), self.board))
+                    possible_moves.append(
+                        Movement((row, col), (new_row, new_col), self.board)
+                    )
+                break
+
+            possible_moves.append(Movement((row, col), (new_row, new_col), self.board))
+
+        # moving down-left
+        for new_row in range(row + 1, len(self.board) - 1):
+            new_col = col - (new_row - row)
+            if self.board[new_row][new_col]:
+                if (
+                    self.board[new_row][new_col][0] == "w"
+                    and self.turn == "black"
+                    or self.board[new_row][new_col][0] == "b"
+                    and self.turn == "white"
+                ):
+                    possible_moves.append(
+                        Movement((row, col), (new_row, new_col), self.board)
+                    )
                 break
 
             possible_moves.append(Movement((row, col), (new_row, new_col), self.board))
