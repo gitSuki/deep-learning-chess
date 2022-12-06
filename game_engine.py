@@ -201,7 +201,12 @@ class GameState:
         # moving down
         for i in range(row + 1, len(self.board) - 1):
             if self.board[i][col]:
-                if self.board[i][col][0] == "w":
+                if (
+                    self.board[i][col][0] == "w"
+                    and self.turn == "black"
+                    or self.board[i][col][0] == "b"
+                    and self.turn == "white"
+                ):
                     possible_moves.append(Movement((row, col), (i, col), self.board))
                 break
 
@@ -211,7 +216,12 @@ class GameState:
         for i in range(row - 1, -1, -1):
             # stops if runs into another piece
             if self.board[i][col]:
-                if self.board[i][col][0] == "b":
+                if (
+                    self.board[i][col][0] == "w"
+                    and self.turn == "black"
+                    or self.board[i][col][0] == "b"
+                    and self.turn == "white"
+                ):
                     possible_moves.append(Movement((row, col), (i, col), self.board))
                 break
 
