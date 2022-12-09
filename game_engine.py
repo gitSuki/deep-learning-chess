@@ -306,6 +306,28 @@ class GameState:
                     Movement((row, col), (row + 1, col - 2), self.board)
                 )
 
+        # move 2 down 1 left
+        if (row + 2) < len(self.board) and (col - 1) >= 0:
+            if (
+                not self.board[row + 2][col - 1]
+                or (self.board[row + 2][col - 1][0] == "w" and self.turn == "black")
+                or (self.board[row + 2][col - 1][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(
+                    Movement((row, col), (row + 2, col - 1), self.board)
+                )
+
+        # move 2 down 1 right
+        if (row + 2) < len(self.board) and (col + 1) < len(self.board):
+            if (
+                not self.board[row + 2][col + 1]
+                or (self.board[row + 2][col + 1][0] == "w" and self.turn == "black")
+                or (self.board[row + 2][col + 1][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(
+                    Movement((row, col), (row + 2, col + 1), self.board)
+                )
+
         # move 2 right 1 down
         if (row + 1) < len(self.board) and (col + 2) < len(self.board):
             if (
@@ -317,7 +339,7 @@ class GameState:
                     Movement((row, col), (row + 1, col + 2), self.board)
                 )
 
-                # move 2 right 1 up
+        # move 2 right 1 up
         if (row - 1) >= 0 and (col + 2) < len(self.board):
             if (
                 not self.board[row - 1][col + 2]
