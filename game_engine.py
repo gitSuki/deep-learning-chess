@@ -57,8 +57,8 @@ class GameState:
                 None,
                 None,
                 None,
-                "w_king",
-                "b_king",
+                "w_knight",
+                "b_knight",
                 None,
                 None,
                 None,
@@ -263,94 +263,52 @@ class GameState:
         possible_moves = []
 
         # move 2 up 1 left
-        if (row - 2) >= 0 and (col - 1) >= 0:
-            if (
-                not self.board[row - 2][col - 1]
-                or (self.board[row - 2][col - 1][0] == "w" and self.turn == "black")
-                or (self.board[row - 2][col - 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 2, col - 1), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, -2, -1))
 
         # move 2 up 1 right
-        if (row - 2) >= 0 and (col + 1) < len(self.board):
-            if (
-                not self.board[row - 2][col + 1]
-                or (self.board[row - 2][col + 1][0] == "w" and self.turn == "black")
-                or (self.board[row - 2][col + 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 2, col + 1), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, -2, 1))
 
         # move 2 left 1 up
-        if (row - 1) >= 0 and (col - 2) >= 0:
-            if (
-                not self.board[row - 1][col - 2]
-                or (self.board[row - 1][col - 2][0] == "w" and self.turn == "black")
-                or (self.board[row - 1][col - 2][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 1, col - 2), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, -1, -2))
 
         # move 2 left 1 down
-        if (row + 1) < len(self.board) and (col - 2) >= 0:
-            if (
-                not self.board[row + 1][col - 2]
-                or (self.board[row + 1][col - 2][0] == "w" and self.turn == "black")
-                or (self.board[row + 1][col - 2][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 1, col - 2), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, 1, -2))
 
         # move 2 down 1 left
-        if (row + 2) < len(self.board) and (col - 1) >= 0:
-            if (
-                not self.board[row + 2][col - 1]
-                or (self.board[row + 2][col - 1][0] == "w" and self.turn == "black")
-                or (self.board[row + 2][col - 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 2, col - 1), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, 2, -1))
 
         # move 2 down 1 right
-        if (row + 2) < len(self.board) and (col + 1) < len(self.board):
-            if (
-                not self.board[row + 2][col + 1]
-                or (self.board[row + 2][col + 1][0] == "w" and self.turn == "black")
-                or (self.board[row + 2][col + 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 2, col + 1), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, 2, 1))
 
         # move 2 right 1 down
-        if (row + 1) < len(self.board) and (col + 2) < len(self.board):
-            if (
-                not self.board[row + 1][col + 2]
-                or (self.board[row + 1][col + 2][0] == "w" and self.turn == "black")
-                or (self.board[row + 1][col + 2][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 1, col + 2), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, 1, 2))
 
         # move 2 right 1 up
-        if (row - 1) >= 0 and (col + 2) < len(self.board):
-            if (
-                not self.board[row - 1][col + 2]
-                or (self.board[row - 1][col + 2][0] == "w" and self.turn == "black")
-                or (self.board[row - 1][col + 2][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 1, col + 2), self.board)
-                )
+        possible_moves.append(self.knight_move(row, col, -1, 2))
 
         return possible_moves
+
+    def knight_move(self, row: int, col: int, row_offset: int, col_offset: int) -> list:
+        if (
+            (row + row_offset) < len(self.board)
+            and (row + row_offset) >= 0
+            and (col + col_offset) < len(self.board)
+            and (col + col_offset) >= 0
+        ):
+            if (
+                not self.board[row + row_offset][col + col_offset]
+                or (
+                    self.board[row + row_offset][col + col_offset][0] == "w"
+                    and self.turn == "black"
+                )
+                or (
+                    self.board[row + row_offset][col + col_offset][0] == "b"
+                    and self.turn == "white"
+                )
+            ):
+                return Movement(
+                    (row, col), (row + row_offset, col + col_offset), self.board
+                )
 
     def get_bishop_moves(self, row: int, col: int) -> list:
         possible_moves = []
