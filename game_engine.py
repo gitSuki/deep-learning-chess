@@ -57,8 +57,8 @@ class GameState:
                 None,
                 None,
                 None,
-                "w_knight",
-                "b_knight",
+                "w_king",
+                "b_king",
                 None,
                 None,
                 None,
@@ -570,7 +570,27 @@ class GameState:
         return possible_moves
 
     def get_king_moves(self, row: int, col: int) -> list:
-        return []
+        possible_moves = []
+
+        # move 1 up
+        if (row + 1) < len(self.board):
+            if (
+                not self.board[row - 1][col]
+                or (self.board[row - 1][col][0] == "w" and self.turn == "black")
+                or (self.board[row - 1][col][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(Movement((row, col), (row - 1, col), self.board))
+
+        # move 1 down
+        if (row + 1) < len(self.board):
+            if (
+                not self.board[row + 1][col]
+                or (self.board[row + 1][col][0] == "w" and self.turn == "black")
+                or (self.board[row + 1][col][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(Movement((row, col), (row + 1, col), self.board))
+
+        return possible_moves
 
 
 class Movement:
