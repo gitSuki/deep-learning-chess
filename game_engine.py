@@ -260,7 +260,19 @@ class GameState:
         return possible_moves
 
     def get_knight_moves(self, row: int, col: int) -> list:
-        return []
+        possible_moves = []
+
+        # move 2 up 1 left
+        if (
+            not self.board[row - 2][col - 1]
+            or (self.board[row - 2][col - 1][0] == "w"
+            and self.turn == "black")
+            or (self.board[row - 2][col - 1][0] == "b"
+            and self.turn == "white")
+        ):
+            possible_moves.append(Movement((row, col), (row - 2, col - 1), self.board))
+
+        return possible_moves
 
     def get_bishop_moves(self, row: int, col: int) -> list:
         possible_moves = []
