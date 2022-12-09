@@ -57,8 +57,8 @@ class GameState:
                 None,
                 None,
                 None,
-                "w_knight",
-                "b_knight",
+                "w_king",
+                "b_king",
                 None,
                 None,
                 None,
@@ -263,32 +263,32 @@ class GameState:
         possible_moves = []
 
         # move 2 up 1 left
-        possible_moves.append(self.knight_move(row, col, -2, -1))
+        possible_moves.append(self.constant_move(row, col, -2, -1))
 
         # move 2 up 1 right
-        possible_moves.append(self.knight_move(row, col, -2, 1))
+        possible_moves.append(self.constant_move(row, col, -2, 1))
 
         # move 2 left 1 up
-        possible_moves.append(self.knight_move(row, col, -1, -2))
+        possible_moves.append(self.constant_move(row, col, -1, -2))
 
         # move 2 left 1 down
-        possible_moves.append(self.knight_move(row, col, 1, -2))
+        possible_moves.append(self.constant_move(row, col, 1, -2))
 
         # move 2 down 1 left
-        possible_moves.append(self.knight_move(row, col, 2, -1))
+        possible_moves.append(self.constant_move(row, col, 2, -1))
 
         # move 2 down 1 right
-        possible_moves.append(self.knight_move(row, col, 2, 1))
+        possible_moves.append(self.constant_move(row, col, 2, 1))
 
         # move 2 right 1 down
-        possible_moves.append(self.knight_move(row, col, 1, 2))
+        possible_moves.append(self.constant_move(row, col, 1, 2))
 
         # move 2 right 1 up
-        possible_moves.append(self.knight_move(row, col, -1, 2))
+        possible_moves.append(self.constant_move(row, col, -1, 2))
 
         return possible_moves
 
-    def knight_move(self, row: int, col: int, row_offset: int, col_offset: int) -> list:
+    def constant_move(self, row: int, col: int, row_offset: int, col_offset: int) -> list:
         if (
             (row + row_offset) < len(self.board)
             and (row + row_offset) >= 0
@@ -531,84 +531,28 @@ class GameState:
         possible_moves = []
 
         # move up
-        if (row - 1) >= 0:
-            if (
-                not self.board[row - 1][col]
-                or (self.board[row - 1][col][0] == "w" and self.turn == "black")
-                or (self.board[row - 1][col][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(Movement((row, col), (row - 1, col), self.board))
+        possible_moves.append(self.constant_move(row, col, -1, 0))
 
         # move up-left
-        if (row - 1) >= 0 and (col - 1) >= 0:
-            if (
-                not self.board[row - 1][col - 1]
-                or (self.board[row - 1][col - 1][0] == "w" and self.turn == "black")
-                or (self.board[row - 1][col - 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 1, col - 1), self.board)
-                )
+        possible_moves.append(self.constant_move(row, col, -1, -1))
 
         # move left
-        if (col - 1) >= 0:
-            if (
-                not self.board[row][col - 1]
-                or (self.board[row][col - 1][0] == "w" and self.turn == "black")
-                or (self.board[row][col - 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(Movement((row, col), (row, col - 1), self.board))
+        possible_moves.append(self.constant_move(row, col, 0, -1))
 
         # move down-left
-        if (row + 1) < len(self.board) and (col - 1) >= 0:
-            if (
-                not self.board[row + 1][col - 1]
-                or (self.board[row + 1][col - 1][0] == "w" and self.turn == "black")
-                or (self.board[row + 1][col - 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 1, col - 1), self.board)
-                )
+        possible_moves.append(self.constant_move(row, col, 1, -1))
 
         # move down
-        if (row + 1) < len(self.board):
-            if (
-                not self.board[row + 1][col]
-                or (self.board[row + 1][col][0] == "w" and self.turn == "black")
-                or (self.board[row + 1][col][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(Movement((row, col), (row + 1, col), self.board))
+        possible_moves.append(self.constant_move(row, col, 1, 0))
 
         # move down-right
-        if (row + 1) < len(self.board) and (col + 1) < len(self.board):
-            if (
-                not self.board[row + 1][col + 1]
-                or (self.board[row + 1][col + 1][0] == "w" and self.turn == "black")
-                or (self.board[row + 1][col + 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row + 1, col + 1), self.board)
-                )
+        possible_moves.append(self.constant_move(row, col, 1, 1))
 
         # move right
-        if (col + 1) < len(self.board):
-            if (
-                not self.board[row][col + 1]
-                or (self.board[row][col + 1][0] == "w" and self.turn == "black")
-                or (self.board[row][col + 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(Movement((row, col), (row, col + 1), self.board))
+        possible_moves.append(self.constant_move(row, col, 0, 1))
 
         # move up-right
-        if (row - 1) >= 0 and (col + 1) < len(self.board):
-            if (
-                not self.board[row - 1][col + 1]
-                or (self.board[row - 1][col + 1][0] == "w" and self.turn == "black")
-                or (self.board[row - 1][col + 1][0] == "b" and self.turn == "white")
-            ):
-                possible_moves.append(
-                    Movement((row, col), (row - 1, col + 1), self.board)
-                )
+        possible_moves.append(self.constant_move(row, col, -1, 1))
 
         return possible_moves
 
