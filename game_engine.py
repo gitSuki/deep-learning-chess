@@ -572,7 +572,7 @@ class GameState:
     def get_king_moves(self, row: int, col: int) -> list:
         possible_moves = []
 
-        # move 1 up
+        # move up
         if (row + 1) < len(self.board):
             if (
                 not self.board[row - 1][col]
@@ -581,7 +581,16 @@ class GameState:
             ):
                 possible_moves.append(Movement((row, col), (row - 1, col), self.board))
 
-        # move 1 down
+        # move left
+        if (col - 1) < len(self.board):
+            if (
+                not self.board[row][col - 1]
+                or (self.board[row][col - 1][0] == "w" and self.turn == "black")
+                or (self.board[row][col - 1][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(Movement((row, col), (row, col - 1), self.board))
+
+        # move down
         if (row + 1) < len(self.board):
             if (
                 not self.board[row + 1][col]
@@ -589,6 +598,15 @@ class GameState:
                 or (self.board[row + 1][col][0] == "b" and self.turn == "white")
             ):
                 possible_moves.append(Movement((row, col), (row + 1, col), self.board))
+
+        # move right
+        if (col + 1) < len(self.board):
+            if (
+                not self.board[row][col + 1]
+                or (self.board[row][col + 1][0] == "w" and self.turn == "black")
+                or (self.board[row][col + 1][0] == "b" and self.turn == "white")
+            ):
+                possible_moves.append(Movement((row, col), (row, col + 1), self.board))
 
         return possible_moves
 
