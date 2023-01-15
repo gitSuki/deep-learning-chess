@@ -35,12 +35,12 @@ def main() -> None:
                     game_state_has_changed = True
 
             elif e.type == pg.MOUSEBUTTONDOWN:
-                location = pg.mouse.get_pos()  # (x, y) location of mouse
+                location = pg.mouse.get_pos()  # gets (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
                 col = location[0] // SQUARE_SIZE
 
-                was_already_selected = selected_square == (row, col)
-                if was_already_selected:
+                square_was_already_selected = selected_square == (row, col)
+                if square_was_already_selected:
                     # prevents the user from being able to move their piece to the same square it started on
                     selected_square = ()
                     select_log = []
@@ -48,15 +48,19 @@ def main() -> None:
                     selected_square = (row, col)
                     select_log.append(selected_square)
 
-                if len(select_log) >= 2:
+                user_has_clicked_movement_destination = len(select_log) == 2
+                if user_has_clicked_movement_destination:
                     move = engine.Movement(
                         select_log[0], select_log[1], game_state.board
                     )
                     if move in legal_moves:
                         game_state.execute_move(move)
                         game_state_has_changed = True
-                    selected_square = ()
-                    select_log = []
+                        selected_square = ()
+                        select_log = []
+                    else:
+                        # prevents the user from having to click twice if they made an invalid move
+                        select_log = [selected_square]
 
         if game_state_has_changed:
             legal_moves = game_state.get_possible_moves()
