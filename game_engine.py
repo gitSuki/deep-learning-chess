@@ -10,6 +10,10 @@ class GameState:
             "queen": self.get_queen_moves,
             "king": self.get_king_moves,
         }
+        self.king_locations = {
+            "white": (7, 4),
+            "black": (0, 4),
+        }
 
         # board is a 2d list representation of an 8x8 chess board
         self.board = [
@@ -95,13 +99,18 @@ class GameState:
             ],
         ]
 
-    def swap_player_turn(self):
+    def swap_player_turn(self) -> None:
         self.turn = "black" if self.turn == "white" else "white"
 
     def execute_move(self, move: object) -> None:
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
+        if move.moved_piece == "w_king":
+            self.king_locations["white"] = move.end_square
+        elif move.moved_piece == "b_king":
+            self.king_locations["black"] = move.end_square
+
         self.swap_player_turn()
 
     def undo_move(self) -> None:
@@ -115,6 +124,12 @@ class GameState:
         self.board[most_recent_move.start_square[0]][
             most_recent_move.start_square[1]
         ] = most_recent_move.moved_piece
+
+        if most_recent_move.moved_piece == "w_king":
+            self.king_locations["white"] = most_recent_move.start_square
+        elif most_recent_move.moved_piece == "b_king":
+            self.king_locations["black"] = most_recent_move.start_square
+
         self.swap_player_turn()
 
     def get_possible_moves(self) -> list:
@@ -136,6 +151,30 @@ class GameState:
                     possible_moves += self.move_methods[piece](row, col)
 
         return possible_moves
+
+    def constant_move(
+        self, row: int, col: int, row_offset: int, col_offset: int
+    ) -> list:
+        if (
+            (row + row_offset) < len(self.board)
+            and (row + row_offset) >= 0
+            and (col + col_offset) < len(self.board)
+            and (col + col_offset) >= 0
+        ):
+            if (
+                not self.board[row + row_offset][col + col_offset]
+                or (
+                    self.board[row + row_offset][col + col_offset][0] == "w"
+                    and self.turn == "black"
+                )
+                or (
+                    self.board[row + row_offset][col + col_offset][0] == "b"
+                    and self.turn == "white"
+                )
+            ):
+                return Movement(
+                    (row, col), (row + row_offset, col + col_offset), self.board
+                )
 
     def get_pawn_moves(self, row: int, col: int) -> list:
         possible_moves = []
@@ -287,28 +326,6 @@ class GameState:
         possible_moves.append(self.constant_move(row, col, -1, 2))
 
         return possible_moves
-
-    def constant_move(self, row: int, col: int, row_offset: int, col_offset: int) -> list:
-        if (
-            (row + row_offset) < len(self.board)
-            and (row + row_offset) >= 0
-            and (col + col_offset) < len(self.board)
-            and (col + col_offset) >= 0
-        ):
-            if (
-                not self.board[row + row_offset][col + col_offset]
-                or (
-                    self.board[row + row_offset][col + col_offset][0] == "w"
-                    and self.turn == "black"
-                )
-                or (
-                    self.board[row + row_offset][col + col_offset][0] == "b"
-                    and self.turn == "white"
-                )
-            ):
-                return Movement(
-                    (row, col), (row + row_offset, col + col_offset), self.board
-                )
 
     def get_bishop_moves(self, row: int, col: int) -> list:
         possible_moves = []
