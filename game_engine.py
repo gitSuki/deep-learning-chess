@@ -146,7 +146,8 @@ class GameState:
         players_possible_moves = self.get_possible_moves()
 
         for i in range(len(players_possible_moves) - 1, -1, -1):
-            move = self.execute_move(players_possible_moves[i])
+            print(players_possible_moves[i])
+            # move = self.execute_move(players_possible_moves[i])
 
         return players_possible_moves
 
@@ -705,3 +706,6 @@ class Movement:
             and self.moved_piece == other.moved_piece
             and self.captured_piece == other.captured_piece
         )
+
+    def __str__(self):
+        return f'Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}'
