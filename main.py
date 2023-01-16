@@ -15,7 +15,7 @@ def main() -> None:
     clock = pg.time.Clock()
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
-    legal_moves = game_state.get_possible_moves()
+    legal_moves = game_state.get_valid_moves()
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
@@ -63,7 +63,7 @@ def main() -> None:
                         select_log = [selected_square]
 
         if game_state_has_changed:
-            legal_moves = game_state.get_possible_moves()
+            legal_moves = game_state.get_valid_moves()
             game_state_has_changed = False
 
         gui.draw_game_state(screen, game_state, IMAGES, GRID_DIMENSION, SQUARE_SIZE)

@@ -132,6 +132,24 @@ class GameState:
 
         self.swap_player_turn()
 
+    def get_valid_moves(self) -> list:
+        """
+        Calculates all moves, accounting for checks and checkmate
+        Explanation:
+        1) Generates all the player's possible moves
+        2) For each move, execute the move
+        3) Generate all opponent's moves
+        4) For each of the opponent's moves, see if they will check the player's King
+        5) If any of the opponent's move check's the player's king, the player's move is not valid
+        """
+        valid_moves = []
+        players_possible_moves = self.get_possible_moves()
+
+        for i in range(len(players_possible_moves) - 1, -1, -1):
+            move = self.execute_move(players_possible_moves[i])
+
+        return players_possible_moves
+
     def get_possible_moves(self) -> list:
         """
         Calculates all potential moves, regardless of checks and checkmate
@@ -152,30 +170,6 @@ class GameState:
                     possible_moves += move_method(row, col)
 
         return possible_moves
-
-    def constant_move(
-        self, row: int, col: int, row_offset: int, col_offset: int
-    ) -> list:
-        if (
-            (row + row_offset) < len(self.board)
-            and (row + row_offset) >= 0
-            and (col + col_offset) < len(self.board)
-            and (col + col_offset) >= 0
-        ):
-            if (
-                not self.board[row + row_offset][col + col_offset]
-                or (
-                    self.board[row + row_offset][col + col_offset][0] == "w"
-                    and self.turn == "black"
-                )
-                or (
-                    self.board[row + row_offset][col + col_offset][0] == "b"
-                    and self.turn == "white"
-                )
-            ):
-                return Movement(
-                    (row, col), (row + row_offset, col + col_offset), self.board
-                )
 
     def get_pawn_moves(self, row: int, col: int) -> list:
         possible_moves = []
