@@ -132,7 +132,7 @@ class GameState:
 
         self.swap_player_turn()
 
-    def get_valid_moves(self) -> list:
+    def get_legal_moves(self) -> list:
         """
         Calculates all moves, accounting for checks and checkmate
         Explanation:
@@ -142,14 +142,49 @@ class GameState:
         4) For each of the opponent's moves, see if they will check the player's King
         5) If any of the opponent's move check's the player's king, the player's move is not valid
         """
-        valid_moves = []
         players_possible_moves = self.get_possible_moves()
 
-        for i in range(len(players_possible_moves) - 1, -1, -1):
-            print(players_possible_moves[i])
-            # move = self.execute_move(players_possible_moves[i])
+        for move in players_possible_moves[::-1]:
+            self.execute_move(move)
+            # execute_move() automatically swaps player's turns, we need to reswap turns again otherwise our
+            # helper methods will calculate for the wrong player
+            self.swap_player_turn()
+            would_put_king_in_check = self.in_check()
 
+            if would_put_king_in_check:
+                players_possible_moves.remove(move)
+
+            self.swap_player_turn()
+            self.undo_move()
+
+        for move in players_possible_moves:
+            print(move)
+        print(" ")
         return players_possible_moves
+
+    def in_check(self):
+        """
+        Calculates if the current player is in check
+        """
+        if self.turn == "white":
+            return self.square_under_attack(self.king_locations["white"])
+        else:
+            return self.square_under_attack(self.king_locations["black"])
+
+    def square_under_attack(self, square):
+        """
+        Calculates if the square given as an argument could come under attack by the opponent.
+        """
+        self.swap_player_turn()
+        opponents_possible_moves = self.get_possible_moves()
+
+        for opponent_move in opponents_possible_moves:
+            square_is_under_attack = opponent_move.end_square == square
+            if square_is_under_attack:
+                self.swap_player_turn()
+                return True
+        self.swap_player_turn()
+        return False
 
     def get_possible_moves(self) -> list:
         """
@@ -708,4 +743,4 @@ class Movement:
         )
 
     def __str__(self):
-        return f'Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}'
+        return f"Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}"
