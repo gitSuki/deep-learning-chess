@@ -738,12 +738,13 @@ class GameState:
 
 
 class Movement:
-    def __init__(self, start_square: tuple, end_square: tuple, board: list) -> None:
+    def __init__(self, start_square: tuple, end_square: tuple, board: list, promotion_choice: str = 'queen') -> None:
         self.start_square = start_square
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
         self.is_pawn_promotion = self.pawn_promotion()
+        self.promotion_choice = promotion_choice
 
     def __eq__(self, other):
         if not isinstance(other, Movement):
@@ -756,7 +757,10 @@ class Movement:
         )
 
     def __str__(self):
-        return f"Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}. Pawn promotion: {self.is_pawn_promotion}"
+        str = f"Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}."
+        if self.is_pawn_promotion:
+            str += f" Promotion choice: {self.promotion_choice}"
+        return str
 
     def pawn_promotion(self) -> bool:
         w_pawn_can_promote = self.moved_piece == "w_pawn" and self.end_square[0] == 0
