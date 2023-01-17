@@ -112,7 +112,7 @@ class GameState:
 
         if move.is_pawn_promotion:
             controller = move.moved_piece[0]
-            promoted_piece = f"{controller}_queen"
+            promoted_piece = f"{controller}_{move.promotion_choice}"
             self.board[move.end_square[0]][move.end_square[1]] = promoted_piece
 
         self.swap_player_turn()
@@ -128,7 +128,7 @@ class GameState:
         self.swap_player_turn()
         self.checkmate = False
         self.stalemate = False
-    
+
     def update_king_locations(self, move: object) -> None:
         if move.moved_piece == "w_king":
             self.king_locations["white"] = move.end_square
@@ -738,13 +738,13 @@ class GameState:
 
 
 class Movement:
-    def __init__(self, start_square: tuple, end_square: tuple, board: list, promotion_choice: str = 'queen') -> None:
+    def __init__(self, start_square: tuple, end_square: tuple, board: list) -> None:
         self.start_square = start_square
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
         self.is_pawn_promotion = self.pawn_promotion()
-        self.promotion_choice = promotion_choice
+        self.promotion_choice = "queen"
 
     def __eq__(self, other):
         if not isinstance(other, Movement):
@@ -770,3 +770,6 @@ class Movement:
             return True
         else:
             return False
+
+    def set_promotion_choice(self, choice: str) -> None:
+        self.promotion_choice = choice

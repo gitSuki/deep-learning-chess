@@ -55,6 +55,16 @@ def main() -> None:
                     move = engine.Movement(row, col, game_state.board)
 
                     if move in legal_moves:
+                        if move.is_pawn_promotion:
+                            while True:
+                                possible_choices = ["queen", "rook", "bishop", "knight"]
+                                choice = input(
+                                    "Which piece do you want to promote to? (queen, rook, bishop, or knight)\n"
+                                )
+                                if choice in possible_choices:
+                                    break
+                            move.set_promotion_choice(choice)
+
                         game_state.execute_move(move)
                         game_state_has_changed = True
                         selected_square = ()
