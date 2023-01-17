@@ -326,7 +326,7 @@ class GameState:
             possible_moves.append(Movement((row, col), (row, i), self.board))
 
         # moving right
-        for i in range(col + 1, len(self.board) - 1):
+        for i in range(col + 1, len(self.board)):
             # stops if runs into another piece
             if self.board[row][i]:
                 if (
@@ -562,7 +562,7 @@ class GameState:
             possible_moves.append(Movement((row, col), (row, i), self.board))
 
         # moving right
-        for i in range(col + 1, len(self.board) - 1):
+        for i in range(col + 1, len(self.board)):
             # stops if runs into another piece
             if self.board[row][i]:
                 if (
