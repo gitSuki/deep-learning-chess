@@ -1,6 +1,8 @@
 class GameState:
     def __init__(self) -> None:
         self.turn = "white"
+        self.checkmate = False
+        self.stalemate = False
         self.move_log = []
         self.move_methods = {
             "pawn": self.get_pawn_moves,
@@ -131,6 +133,8 @@ class GameState:
             self.king_locations["black"] = most_recent_move.start_square
 
         self.swap_player_turn()
+        self.checkmate = False
+        self.stalemate = False
 
     def get_legal_moves(self) -> list:
         """
@@ -157,12 +161,21 @@ class GameState:
             self.swap_player_turn()
             self.undo_move()
 
+        if len(players_possible_moves) == 0:
+            king_is_in_check = self.in_check()
+            if king_is_in_check:
+                self.checkmate = True
+                print("checkmate")
+            else:
+                self.stalemate = True
+                print("stalemate")
+
         for move in players_possible_moves:
             print(move)
         print(" ")
         return players_possible_moves
 
-    def in_check(self):
+    def in_check(self) -> bool:
         """
         Calculates if the current player is in check
         """
@@ -171,7 +184,7 @@ class GameState:
         else:
             return self.square_under_attack(self.king_locations["black"])
 
-    def square_under_attack(self, square):
+    def square_under_attack(self, square: object) -> bool:
         """
         Calculates if the square given as an argument could come under attack by the opponent.
         """
