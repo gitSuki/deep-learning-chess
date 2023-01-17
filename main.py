@@ -50,9 +50,10 @@ def main() -> None:
 
                 user_has_clicked_movement_destination = len(select_log) == 2
                 if user_has_clicked_movement_destination:
-                    move = engine.Movement(
-                        select_log[0], select_log[1], game_state.board
-                    )
+                    row = select_log[0]
+                    col = select_log[1]
+                    move = engine.Movement(row, col, game_state.board)
+
                     if move in legal_moves:
                         game_state.execute_move(move)
                         game_state_has_changed = True
