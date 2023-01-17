@@ -104,17 +104,17 @@ class GameState:
     def swap_player_turn(self) -> None:
         self.turn = "black" if self.turn == "white" else "white"
 
-    def update_king_locations(self, move: object) -> None:
-        if move.moved_piece == "w_king":
-            self.king_locations["white"] = move.end_square
-        elif move.moved_piece == "b_king":
-            self.king_locations["black"] = move.end_square
-
     def execute_move(self, move: object) -> None:
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
         self.update_king_locations(move)
+
+        if move.is_pawn_promotion:
+            controller = move.moved_piece[0]
+            promoted_piece = f"{controller}_queen"
+            self.board[move.end_square[0]][move.end_square[1]] = promoted_piece
+
         self.swap_player_turn()
 
     def undo_move(self) -> None:
@@ -128,6 +128,12 @@ class GameState:
         self.swap_player_turn()
         self.checkmate = False
         self.stalemate = False
+    
+    def update_king_locations(self, move: object) -> None:
+        if move.moved_piece == "w_king":
+            self.king_locations["white"] = move.end_square
+        elif move.moved_piece == "b_king":
+            self.king_locations["black"] = move.end_square
 
     def get_legal_moves(self) -> list:
         """
