@@ -104,34 +104,27 @@ class GameState:
     def swap_player_turn(self) -> None:
         self.turn = "black" if self.turn == "white" else "white"
 
-    def execute_move(self, move: object) -> None:
-        self.board[move.start_square[0]][move.start_square[1]] = None
-        self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
-        self.move_log.append(move)
+    def update_king_locations(self, move: object) -> None:
         if move.moved_piece == "w_king":
             self.king_locations["white"] = move.end_square
         elif move.moved_piece == "b_king":
             self.king_locations["black"] = move.end_square
 
+    def execute_move(self, move: object) -> None:
+        self.board[move.start_square[0]][move.start_square[1]] = None
+        self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
+        self.move_log.append(move)
+        self.update_king_locations(move)
         self.swap_player_turn()
 
     def undo_move(self) -> None:
         if len(self.move_log) == 0:
             return
 
-        most_recent_move = self.move_log.pop()
-        self.board[most_recent_move.end_square[0]][
-            most_recent_move.end_square[1]
-        ] = most_recent_move.captured_piece
-        self.board[most_recent_move.start_square[0]][
-            most_recent_move.start_square[1]
-        ] = most_recent_move.moved_piece
-
-        if most_recent_move.moved_piece == "w_king":
-            self.king_locations["white"] = most_recent_move.start_square
-        elif most_recent_move.moved_piece == "b_king":
-            self.king_locations["black"] = most_recent_move.start_square
-
+        move = self.move_log.pop()
+        self.board[move.end_square[0]][move.end_square[1]] = move.captured_piece
+        self.board[move.start_square[0]][move.start_square[1]] = move.moved_piece
+        self.update_king_locations(move)
         self.swap_player_turn()
         self.checkmate = False
         self.stalemate = False
