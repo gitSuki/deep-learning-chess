@@ -87,7 +87,7 @@ def highlight_squares(
     selected_square: tuple,
     square_size: int,
 ) -> None:
-    valid_square_selected = selected_square != ()
+    valid_square_selected = selected_square != () and game_state.board[selected_square[0]][selected_square[1]] != None
 
     if valid_square_selected:
         selected_row, selected_col = selected_square
@@ -98,13 +98,15 @@ def highlight_squares(
         if piece_is_players:
             highlight_surface = pg.Surface((square_size, square_size))
             highlight_surface.set_alpha(100)
-            highlight_surface.fill(pg.selected_color("blue"))
+            highlight_surface.fill(pg.Color("yellow"))
             pixel_coordinates = (selected_col * square_size, selected_row * square_size)
             screen.blit(highlight_surface, pixel_coordinates)
 
             for move in legal_moves:
-                highlight_surface.fill(pg.Color("green"))
+                highlight_surface.fill(pg.Color("blue"))
                 if move.start_square == selected_square:
                     end_row, end_col = move.end_square
+                    if move.captured_piece:
+                        highlight_surface.fill(pg.Color("green"))
                     pixel_coordinates = (end_col * square_size, end_row * square_size)
                     screen.blit(highlight_surface, pixel_coordinates)
