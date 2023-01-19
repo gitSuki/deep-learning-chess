@@ -87,26 +87,56 @@ def highlight_squares(
     selected_square: tuple,
     square_size: int,
 ) -> None:
-    valid_square_selected = selected_square != () and game_state.board[selected_square[0]][selected_square[1]] != None
-
+    """
+    Highlights the selected square and all valid movements the piece may make
+    """
+    valid_square_selected = (
+        selected_square != ()
+        and game_state.board[selected_square[0]][selected_square[1]] != None
+    )
     if valid_square_selected:
-        selected_row, selected_col = selected_square
-        piece_is_players = (
-            game_state.board[selected_row][selected_col][0] == game_state.turn[0]
+        selected_piece_is_players = (
+            game_state.board[selected_square[0]][selected_square[1]][0]
+            == game_state.turn[0]
         )
+        if selected_piece_is_players:
+            highlight_individual_square(screen, "yellow", selected_square, square_size)
+            highlight_movement_options(
+                screen, legal_moves, selected_square, square_size
+            )
 
-        if piece_is_players:
-            highlight_surface = pg.Surface((square_size, square_size))
-            highlight_surface.set_alpha(100)
-            highlight_surface.fill(pg.Color("yellow"))
-            pixel_coordinates = (selected_col * square_size, selected_row * square_size)
-            screen.blit(highlight_surface, pixel_coordinates)
 
-            for move in legal_moves:
-                highlight_surface.fill(pg.Color("blue"))
-                if move.start_square == selected_square:
-                    end_row, end_col = move.end_square
-                    if move.captured_piece:
-                        highlight_surface.fill(pg.Color("green"))
-                    pixel_coordinates = (end_col * square_size, end_row * square_size)
-                    screen.blit(highlight_surface, pixel_coordinates)
+def highlight_movement_options(
+    screen: object,
+    legal_moves: list,
+    selected_square: tuple,
+    square_size: int,
+) -> None:
+    """
+    Highlights all valid movements the piece may make
+    """
+    for move in legal_moves:
+        color = "blue"
+        if move.start_square == selected_square:
+            if move.captured_piece:
+                color = "green"
+            highlight_individual_square(screen, color, move.end_square, square_size)
+
+
+def highlight_individual_square(
+    screen: object,
+    color: str,
+    square_location: tuple,
+    square_size: int,
+) -> None:
+    """
+    Highlights a specific individual square
+    """
+    highlight_surface = pg.Surface((square_size, square_size))
+    highlight_surface.set_alpha(100)
+    pixel_coordinates = (
+        square_location[1] * square_size,
+        square_location[0] * square_size,
+    )
+    highlight_surface.fill(pg.Color(color))
+    screen.blit(highlight_surface, pixel_coordinates)
