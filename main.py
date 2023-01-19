@@ -77,7 +77,7 @@ def main() -> None:
             legal_moves = game_state.get_legal_moves()
             game_state_has_changed = False
 
-        gui.draw_game_state(screen, game_state, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
+        gui.draw_game_state(screen, game_state, legal_moves, selected_square, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
         clock.tick(FPS)
         pg.display.flip()
 

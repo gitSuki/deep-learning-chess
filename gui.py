@@ -29,12 +29,15 @@ def load_images(square_size: int) -> list:
 def draw_game_state(
     screen: object,
     game_state: object,
+    legal_moves: list,
+    selected_square: tuple,
     images: list,
     grid_dimension: int,
     square_size: int,
 ) -> None:
     draw_board(screen, grid_dimension, square_size)
     draw_pieces(screen, game_state, images, grid_dimension, square_size)
+    highlight_squares(screen, game_state, legal_moves, selected_square, square_size)
 
 
 def draw_board(screen: object, grid_dimension: int, square_size: int):
@@ -61,7 +64,7 @@ def draw_pieces(
     images: list,
     grid_dimension: int,
     square_size: int,
-):
+) -> None:
     """
     Draws all the chess pieces on the board using based on the current game_state.
     """
@@ -75,3 +78,33 @@ def draw_pieces(
                         col * square_size, row * square_size, square_size, square_size
                     ),
                 )
+
+
+def highlight_squares(
+    screen: object,
+    game_state: object,
+    legal_moves: list,
+    selected_square: tuple,
+    square_size: int,
+) -> None:
+    valid_square_selected = selected_square != ()
+
+    if valid_square_selected:
+        selected_row, selected_col = selected_square
+        piece_is_players = (
+            game_state.board[selected_row][selected_col][0] == game_state.turn[0]
+        )
+
+        if piece_is_players:
+            highlight_surface = pg.Surface((square_size, square_size))
+            highlight_surface.set_alpha(100)
+            highlight_surface.fill(pg.selected_color("blue"))
+            pixel_coordinates = (selected_col * square_size, selected_row * square_size)
+            screen.blit(highlight_surface, pixel_coordinates)
+
+            for move in legal_moves:
+                highlight_surface.fill(pg.Color("green"))
+                if move.start_square == selected_square:
+                    end_row, end_col = move.end_square
+                    pixel_coordinates = (end_col * square_size, end_row * square_size)
+                    screen.blit(highlight_surface, pixel_coordinates)
