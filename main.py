@@ -16,6 +16,7 @@ def main() -> None:
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
     legal_moves = game_state.get_legal_moves()
+    should_be_animated = False  # used as a flag for if a move should be animated
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
@@ -31,6 +32,7 @@ def main() -> None:
 
             elif e.type == pg.KEYDOWN:
                 if e.key == pg.K_z:
+                    should_be_animated = False
                     game_state.undo_move()
                     game_state_has_changed = True
 
@@ -67,6 +69,7 @@ def main() -> None:
 
                         game_state.execute_move(move)
                         game_state_has_changed = True
+                        should_be_animated = True
                         selected_square = ()
                         select_log = []
                     else:
@@ -74,11 +77,29 @@ def main() -> None:
                         select_log = [selected_square]
 
         if game_state_has_changed:
-            gui.animate_move(game_state.move_log[-1], game_state, screen, IMAGES, GRID_DIMENSION, SQUARE_SIZE, clock)
+            if should_be_animated:
+                gui.animate_move(
+                    game_state.move_log[-1],
+                    game_state,
+                    screen,
+                    IMAGES,
+                    GRID_DIMENSION,
+                    SQUARE_SIZE,
+                    clock,
+                )
             legal_moves = game_state.get_legal_moves()
+            should_be_animated = False
             game_state_has_changed = False
 
-        gui.draw_game_state(screen, game_state, legal_moves, selected_square, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
+        gui.draw_game_state(
+            screen,
+            game_state,
+            legal_moves,
+            selected_square,
+            IMAGES,
+            GRID_DIMENSION,
+            SQUARE_SIZE,
+        )
         clock.tick(FPS)
         pg.display.flip()
 
