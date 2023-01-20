@@ -36,6 +36,14 @@ def main() -> None:
                     game_state.undo_move()
                     game_state_has_changed = True
 
+                if e.key == pg.K_r:
+                    game_state = engine.GameState()
+                    legal_moves = game_state.get_legal_moves()
+                    selected_square = ()
+                    select_log = []
+                    should_be_animated = False
+                    game_state_has_changed = False
+
             elif e.type == pg.MOUSEBUTTONDOWN:
                 location = pg.mouse.get_pos()  # gets (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
