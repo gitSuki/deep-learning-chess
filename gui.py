@@ -140,3 +140,32 @@ def highlight_individual_square(
     )
     highlight_surface.fill(pg.Color(color))
     screen.blit(highlight_surface, pixel_coordinates)
+
+def animate_move(move, game_state, screen, images, grid_dimension, square_size, clock):
+    change_row = move.end_square[0] - move.start_square[0]
+    change_col = move.end_square[1] - move.start_square[1]
+    frames_per_square = 10
+    frame_count = (abs(change_row) + abs(change_col)) * frames_per_square
+
+    for frame in range(frame_count + 1):
+        row = move.start_square[0] + change_row * frame / frame_count
+        col = move.start_square[1] + change_col * frame / frame_count
+        draw_board(screen, grid_dimension, square_size)
+        draw_pieces(screen, game_state, images, grid_dimension, square_size)
+
+        location_is_even = (move.end_square[0] + move.end_square[1]) % 2
+        if location_is_even:
+            color = pg.Color("white")
+        else:
+            color = pg.Color("gray")
+        end_square = pg.Rect(move.end_square[1] * square_size, move.end_square[0] * square_size, square_size, square_size)
+        pg.draw.rect(screen, color, end_square)
+
+        if move.captured_piece:
+            screen.blit(images[move.captured_piece], end_square)
+
+        animated_piece_location = pg.Rect(col * square_size, row * square_size, square_size, square_size)
+        screen.blit(images[move.moved_piece], animated_piece_location)
+        pg.display.flip()
+        clock.tick(60)
+    
