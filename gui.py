@@ -38,6 +38,7 @@ def draw_game_state(
     draw_board(screen, grid_dimension, square_size)
     draw_pieces(screen, game_state, images, grid_dimension, square_size)
     highlight_squares(screen, game_state, legal_moves, selected_square, square_size)
+    highlight_last_move(screen, game_state, square_size)
 
 
 def draw_board(screen: object, grid_dimension: int, square_size: int):
@@ -119,7 +120,7 @@ def highlight_movement_options(
         color = "blue"
         if move.start_square == selected_square:
             if move.captured_piece:
-                color = "green"
+                color = "red"
             highlight_individual_square(screen, color, move.end_square, square_size)
 
 
@@ -141,6 +142,21 @@ def highlight_individual_square(
     highlight_surface.fill(pg.Color(color))
     screen.blit(highlight_surface, pixel_coordinates)
 
+
+def highlight_last_move(
+    screen: object,
+    game_state: object,
+    square_size: int,
+):
+    if len(game_state.move_log) >= 1:
+        highlight_individual_square(
+            screen, "yellow", game_state.move_log[-1].start_square, square_size
+        )
+        highlight_individual_square(
+            screen, "yellow", game_state.move_log[-1].end_square, square_size
+        )
+
+
 def animate_move(move, game_state, screen, images, grid_dimension, square_size, clock):
     change_row = move.end_square[0] - move.start_square[0]
     change_col = move.end_square[1] - move.start_square[1]
@@ -158,14 +174,20 @@ def animate_move(move, game_state, screen, images, grid_dimension, square_size, 
             color = pg.Color("white")
         else:
             color = pg.Color("gray")
-        end_square = pg.Rect(move.end_square[1] * square_size, move.end_square[0] * square_size, square_size, square_size)
+        end_square = pg.Rect(
+            move.end_square[1] * square_size,
+            move.end_square[0] * square_size,
+            square_size,
+            square_size,
+        )
         pg.draw.rect(screen, color, end_square)
 
         if move.captured_piece:
             screen.blit(images[move.captured_piece], end_square)
 
-        animated_piece_location = pg.Rect(col * square_size, row * square_size, square_size, square_size)
+        animated_piece_location = pg.Rect(
+            col * square_size, row * square_size, square_size, square_size
+        )
         screen.blit(images[move.moved_piece], animated_piece_location)
         pg.display.flip()
         clock.tick(60)
-    
