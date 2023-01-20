@@ -1,6 +1,7 @@
 import pygame as pg
 import game_engine as engine
 import gui as gui
+import game_ai as ai
 
 pg.init()
 GRID_SIZE = 512
@@ -18,14 +19,17 @@ def main() -> None:
     legal_moves = game_state.get_legal_moves()
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
+    is_running = True
     should_be_animated = False  # used as a flag for if a move should be animated
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
+    white_is_player = True
+    black_is_player = False
     game_over = False
 
-    is_running = True
     while is_running:
+        is_human_turn = (game_state.turn == "white" and white_is_player) or (game_state.turn == "black" and black_is_player)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
@@ -45,7 +49,7 @@ def main() -> None:
                     game_state_has_changed = False
                     game_over = False
 
-            elif e.type == pg.MOUSEBUTTONDOWN and not game_over:
+            elif e.type == pg.MOUSEBUTTONDOWN and is_human_turn and not game_over:
                 location = pg.mouse.get_pos()  # gets (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
                 col = location[0] // SQUARE_SIZE
@@ -84,6 +88,12 @@ def main() -> None:
                     else:
                         # prevents the user from having to click twice if they made an invalid move
                         select_log = [selected_square]
+
+        if not is_human_turn and not game_over:
+            move = ai.find_random_move(legal_moves)
+            game_state.execute_move(move)
+            game_state_has_changed = True
+            should_be_animated = True
 
         if game_state_has_changed:
             if should_be_animated:
