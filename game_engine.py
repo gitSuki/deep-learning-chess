@@ -164,10 +164,8 @@ class GameState:
             king_is_in_check = self.in_check()
             if king_is_in_check:
                 self.checkmate = True
-                print("checkmate")
             else:
                 self.stalemate = True
-                print("stalemate")
 
         for move in players_possible_moves:
             print(move)

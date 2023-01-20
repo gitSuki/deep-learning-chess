@@ -16,13 +16,13 @@ def main() -> None:
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
     legal_moves = game_state.get_legal_moves()
+    selected_square = ()  # tuple to represent (row, col) of last selected square
+    select_log = []
     should_be_animated = False  # used as a flag for if a move should be animated
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
-
-    selected_square = ()  # tuple to represent (row, col) of last selected square
-    select_log = []
+    game_over = False
 
     is_running = True
     while is_running:
@@ -43,8 +43,9 @@ def main() -> None:
                     select_log = []
                     should_be_animated = False
                     game_state_has_changed = False
+                    game_over = False
 
-            elif e.type == pg.MOUSEBUTTONDOWN:
+            elif e.type == pg.MOUSEBUTTONDOWN and not game_over:
                 location = pg.mouse.get_pos()  # gets (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
                 col = location[0] // SQUARE_SIZE
@@ -108,6 +109,14 @@ def main() -> None:
             GRID_DIMENSION,
             SQUARE_SIZE,
         )
+
+        if game_state.checkmate:
+            game_over = True
+            gui.draw_text(screen, game_state.turn, "checkmate", GRID_SIZE)
+        elif game_state.stalemate:
+            game_over = True
+            gui.draw_text(screen, game_state.turn, "stalemate", GRID_SIZE)
+
         clock.tick(FPS)
         pg.display.flip()
 

@@ -191,3 +191,10 @@ def animate_move(move, game_state, screen, images, grid_dimension, square_size, 
         screen.blit(images[move.moved_piece], animated_piece_location)
         pg.display.flip()
         clock.tick(60)
+
+def draw_text(screen, victor, victory_condition, grid_size):
+    font = pg.font.SysFont("calibri", 32, True, False)
+    string = f"{victor} wins by {victory_condition}!".capitalize()
+    text = font.render(string, 0, pg.Color("black"))
+    text_location = pg.Rect(0, 0, grid_size, grid_size).move(grid_size/2 - text.get_width()/2, grid_size/2 - text.get_height()/2)
+    screen.blit(text, text_location)
