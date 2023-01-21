@@ -3,7 +3,7 @@ import pygame as pg
 from constants import *
 
 
-def load_images(square_size: int) -> list:
+def load_images() -> list:
     images_dict = {}
     image_list = [
         "w_pawn",
@@ -23,9 +23,12 @@ def load_images(square_size: int) -> list:
     for image in image_list:
         images_dict[image] = pg.transform.scale(
             pg.image.load(f"./assets/{image}.png"),
-            (square_size, square_size),
+            (SQUARE_SIZE, SQUARE_SIZE),
         )
     return images_dict
+
+
+IMAGES = load_images()
 
 
 def draw_game_state(
@@ -33,10 +36,9 @@ def draw_game_state(
     game_state: object,
     legal_moves: list,
     selected_square: tuple,
-    images: list,
 ) -> None:
     draw_board(screen)
-    draw_pieces(screen, game_state, images)
+    draw_pieces(screen, game_state)
     highlight_squares(screen, game_state, legal_moves, selected_square)
     highlight_last_move(screen, game_state)
 
@@ -59,7 +61,7 @@ def draw_board(screen: object):
             )
 
 
-def draw_pieces(screen: object, game_state: object, images: list) -> None:
+def draw_pieces(screen: object, game_state: object) -> None:
     """
     Draws all the chess pieces on the board using based on the current game_state.
     """
@@ -67,8 +69,9 @@ def draw_pieces(screen: object, game_state: object, images: list) -> None:
         for col in range(GRID_DIMENSION):
             piece = game_state.board[row][col]
             if piece:
+                image = f"{piece.team[0]}_{piece.type}"
                 screen.blit(
-                    images[piece],
+                    IMAGES[image],
                     pg.Rect(
                         col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
                     ),
@@ -146,8 +149,8 @@ def animate_move(move, game_state, screen, clock):
     for frame in range(frame_count + 1):
         row = move.start_square[0] + change_row * frame / frame_count
         col = move.start_square[1] + change_col * frame / frame_count
-        draw_board(screen, GRID_DIMENSION, SQUARE_SIZE)
-        draw_pieces(screen, game_state, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
+        draw_board(screen)
+        draw_pieces(screen, game_state)
 
         location_is_even = (move.end_square[0] + move.end_square[1]) % 2
         if location_is_even:

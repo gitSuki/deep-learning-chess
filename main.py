@@ -3,20 +3,18 @@ import game_engine as engine
 import gui as gui
 import game_ai as ai
 
+from constants import *
+
 pg.init()
-GRID_SIZE = 512
-GRID_DIMENSION = 8
-SQUARE_SIZE = GRID_SIZE // GRID_DIMENSION
-FPS = 15
-IMAGES = gui.load_images(SQUARE_SIZE)
 
 
 def main() -> None:
-    screen = pg.display.set_mode((GRID_SIZE, GRID_SIZE))
+    screen = pg.display.set_mode((BOARD_SIZE, BOARD_SIZE))
     clock = pg.time.Clock()
     screen.fill(pg.Color("white"))
     game_state = engine.GameState()
-    legal_moves = game_state.get_legal_moves()
+    # legal_moves = game_state.get_legal_moves()
+    legal_moves = []
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
     is_running = True
@@ -27,9 +25,6 @@ def main() -> None:
     white_is_player = True
     black_is_player = True
     game_over = False
-    for row in game_state.board1:
-        for piece in row:
-            print(piece)
 
     while is_running:
         is_human_turn = (game_state.turn == "white" and white_is_player) or (
@@ -107,15 +102,7 @@ def main() -> None:
             should_be_animated = False
             game_state_has_changed = False
 
-        gui.draw_game_state(
-            screen,
-            game_state,
-            legal_moves,
-            selected_square,
-            IMAGES,
-            GRID_DIMENSION,
-            SQUARE_SIZE,
-        )
+        gui.draw_game_state(screen, game_state, legal_moves, selected_square)
 
         if game_state.checkmate:
             game_over = True
