@@ -27,6 +27,9 @@ def main() -> None:
     white_is_player = True
     black_is_player = True
     game_over = False
+    for row in game_state.board1:
+        for piece in row:
+            print(piece)
 
     while is_running:
         is_human_turn = (game_state.turn == "white" and white_is_player) or (game_state.turn == "black" and black_is_player)
