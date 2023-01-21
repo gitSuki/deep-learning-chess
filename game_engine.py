@@ -1,3 +1,5 @@
+import numpy as np
+
 from constants import *
 from chess_piece import *
 from game_board import game_board
@@ -8,6 +10,7 @@ class GameState:
     """
     Represents the game engine and the current state of the game.
     """
+
     def __init__(self) -> None:
         self.board = game_board()
         self.move_log = []
@@ -131,8 +134,8 @@ class GameState:
         Calculates all potential moves, regardless of checks and checkmate.
         """
         possible_moves = []
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
+        for row in np.arange(len(self.board)):
+            for col in np.arange(len(self.board[row])):
                 square_is_empty = self.board[row][col] == None
                 if square_is_empty:
                     continue

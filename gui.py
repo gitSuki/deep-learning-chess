@@ -1,3 +1,4 @@
+import numpy as np
 import pygame as pg
 
 from constants import *
@@ -47,8 +48,8 @@ def draw_board(screen: object):
     """
     Draws all the background squares on the board. The top left square is always light and the colors alternate between light and dark.
     """
-    for row in range(GRID_DIMENSION):
-        for col in range(GRID_DIMENSION):
+    for row in np.arange(GRID_DIMENSION):
+        for col in np.arange(GRID_DIMENSION):
             location_is_even = (row + col) % 2
             if location_is_even:
                 color = pg.Color("white")
@@ -65,8 +66,8 @@ def draw_pieces(screen: object, game_state: object) -> None:
     """
     Draws all the chess pieces on the board using based on the current game_state.
     """
-    for row in range(GRID_DIMENSION):
-        for col in range(GRID_DIMENSION):
+    for row in np.arange(GRID_DIMENSION):
+        for col in np.arange(GRID_DIMENSION):
             piece = game_state.board[row][col]
             if piece:
                 image = f"{piece.team[0]}_{piece.type}"
@@ -146,7 +147,7 @@ def animate_move(move, game_state, screen, clock):
     frames_per_square = 10
     frame_count = (abs(change_row) + abs(change_col)) * frames_per_square
 
-    for frame in range(frame_count + 1):
+    for frame in np.arange(frame_count + 1):
         row = move.start_square[0] + change_row * frame / frame_count
         col = move.start_square[1] + change_col * frame / frame_count
         draw_board(screen)
