@@ -1,9 +1,10 @@
 import pygame as pg
-import game_engine as engine
-import gui as gui
-import game_ai as ai
 
 from constants import *
+from game_engine import GameState
+from gui import draw_game_state, draw_text, animate_move
+from game_movement import Movement
+from game_ai import find_random_move
 
 pg.init()
 
@@ -11,9 +12,8 @@ pg.init()
 def main() -> None:
     screen = pg.display.set_mode((BOARD_SIZE, BOARD_SIZE))
     clock = pg.time.Clock()
-    screen.fill(pg.Color("white"))
-    game_state = engine.GameState()
-    # legal_moves = game_state.get_legal_moves()
+    game_state = GameState()
+    legal_moves = game_state.get_legal_moves()
     legal_moves = []
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
@@ -27,8 +27,8 @@ def main() -> None:
     game_over = False
 
     while is_running:
-        is_human_turn = (game_state.turn == "white" and white_is_player) or (
-            game_state.turn == "black" and black_is_player
+        is_human_turn = (game_state.turn == WHITE and white_is_player) or (
+            game_state.turn == BLACK and black_is_player
         )
         for e in pg.event.get():
             if e.type == pg.QUIT:
@@ -41,7 +41,7 @@ def main() -> None:
                     game_state_has_changed = True
 
                 if e.key == pg.K_r:
-                    game_state = engine.GameState()
+                    game_state = GameState()
                     legal_moves = game_state.get_legal_moves()
                     selected_square = ()
                     select_log = []
@@ -67,7 +67,7 @@ def main() -> None:
                 if user_has_clicked_movement_destination:
                     row = select_log[0]
                     col = select_log[1]
-                    move = engine.Movement(row, col, game_state.board)
+                    move = Movement(row, col, game_state.board)
 
                     if move in legal_moves:
                         if move.is_pawn_promotion:
@@ -90,26 +90,26 @@ def main() -> None:
                         select_log = [selected_square]
 
         if not is_human_turn and not game_over:
-            move = ai.find_random_move(legal_moves)
+            move = find_random_move(legal_moves)
             game_state.execute_move(move)
             game_state_has_changed = True
             should_be_animated = True
 
         if game_state_has_changed:
             if should_be_animated:
-                gui.animate_move(game_state.move_log[-1], game_state, screen, clock)
+                animate_move(game_state.move_log[-1], game_state, screen, clock)
             legal_moves = game_state.get_legal_moves()
             should_be_animated = False
             game_state_has_changed = False
 
-        gui.draw_game_state(screen, game_state, legal_moves, selected_square)
+        draw_game_state(screen, game_state, legal_moves, selected_square)
 
         if game_state.checkmate:
             game_over = True
-            gui.draw_text(screen, game_state.turn, "checkmate")
+            draw_text(screen, game_state.turn, "checkmate")
         elif game_state.stalemate:
             game_over = True
-            gui.draw_text(screen, game_state.turn, "stalemate")
+            draw_text(screen, game_state.turn, "stalemate")
 
         clock.tick(FPS)
         pg.display.flip()

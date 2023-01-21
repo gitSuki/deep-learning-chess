@@ -91,14 +91,12 @@ def highlight_squares(
     )
     if valid_square_selected:
         selected_piece_is_players = (
-            game_state.board[selected_square[0]][selected_square[1]][0]
-            == game_state.turn[0]
+            game_state.board[selected_square[0]][selected_square[1]].team
+            == game_state.turn
         )
         if selected_piece_is_players:
-            highlight_individual_square(screen, "yellow", selected_square, SQUARE_SIZE)
-            highlight_movement_options(
-                screen, legal_moves, selected_square, SQUARE_SIZE
-            )
+            highlight_individual_square(screen, "yellow", selected_square)
+            highlight_movement_options(screen, legal_moves, selected_square)
 
 
 def highlight_movement_options(

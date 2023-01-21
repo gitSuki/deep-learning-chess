@@ -14,14 +14,6 @@ class GameState:
     def __init__(self) -> None:
         self.board = game_board()
         self.move_log = []
-        self.move_methods = {
-            PAWN: self.get_pawn_moves,
-            ROOK: self.get_rook_moves,
-            KNIGHT: self.get_knight_moves,
-            BISHOP: self.get_bishop_moves,
-            QUEEN: self.get_queen_moves,
-            KING: self.get_king_moves,
-        }
         self.king_locations = {
             WHITE: (7, 4),
             BLACK: (0, 4),
@@ -140,14 +132,12 @@ class GameState:
                 if square_is_empty:
                     continue
 
-                piece_team = self.board[row][col].team
-                piece_type = self.board[row][col].type
-                piece_is_opponents = piece_team != self.turn
+                piece = self.board[row][col]
+                piece_is_opponents = piece.team != self.turn
                 if piece_is_opponents:
                     continue
 
-                move_method = self.move_methods[piece_type]
-                possible_moves += move_method(row, col)
+                possible_moves += piece.get_moves(self.board, row, col)
 
         return possible_moves
 
@@ -161,127 +151,6 @@ class GameState:
             elif move.moved_piece.team == BLACK:
                 self.king_locations[BLACK] = move.end_square
 
-    def get_pawn_moves(self, row: int, col: int) -> list:
-        possible_moves = []
-        if self.turn == "white":
-            # move forward
-            if not self.board[row - 1][col]:
-                possible_moves.append(Movement((row, col), (row - 1, col), self.board))
-                # pawns can move two squares directly forward on their first move
-                # pawns can never move backward so they will always be at their starting row
-                # if they haven't moved
-                if row == 6 and not self.board[row - 2][col]:
-                    possible_moves.append(
-                        Movement((row, col), (row - 2, col), self.board)
-                    )
-            # capture to the left
-            if col - 1 >= 0:
-                piece_exists = self.board[row - 1][col - 1]
-                if piece_exists and self.board[row - 1][col - 1][0] == "b":
-                    possible_moves.append(
-                        Movement((row, col), (row - 1, col - 1), self.board)
-                    )
-            # capture to the right
-            if col + 1 < len(self.board[row]):
-                piece_exists = self.board[row - 1][col + 1]
-                if piece_exists and self.board[row - 1][col + 1][0] == "b":
-                    possible_moves.append(
-                        Movement((row, col), (row - 1, col + 1), self.board)
-                    )
-
-        if self.turn == "black":
-            if (row + 1) < len(self.board):
-                # move forward
-                if not self.board[row + 1][col]:
-                    possible_moves.append(
-                        Movement((row, col), (row + 1, col), self.board)
-                    )
-                    # pawns can move two squares directly forward on their first move
-                    # pawns can never move backward so they will always be at their starting row
-                    # if they haven't moved
-                    if row == 1 and not self.board[row + 2][col]:
-                        possible_moves.append(
-                            Movement((row, col), (row + 2, col), self.board)
-                        )
-                # capture to the left
-                if col + 1 < len(self.board[row]):
-                    piece_exists = self.board[row + 1][col + 1]
-                    if piece_exists and self.board[row + 1][col + 1][0] == "w":
-                        possible_moves.append(
-                            Movement((row, col), (row + 1, col + 1), self.board)
-                        )
-                # capture to the right
-                if col - 1 >= 0:
-                    piece_exists = self.board[row + 1][col - 1]
-                    if piece_exists and self.board[row + 1][col - 1][0] == "w":
-                        possible_moves.append(
-                            Movement((row, col), (row + 1, col - 1), self.board)
-                        )
-        return possible_moves
-
-    def get_rook_moves(self, row: int, col: int) -> list:
-        possible_moves = []
-
-        # moving down
-        for i in range(row + 1, len(self.board) - 1):
-            if self.board[i][col]:
-                if (
-                    self.board[i][col][0] == "w"
-                    and self.turn == "black"
-                    or self.board[i][col][0] == "b"
-                    and self.turn == "white"
-                ):
-                    possible_moves.append(Movement((row, col), (i, col), self.board))
-                break
-
-            possible_moves.append(Movement((row, col), (i, col), self.board))
-
-        # moving up
-        for i in range(row - 1, -1, -1):
-            # stops if runs into another piece
-            if self.board[i][col]:
-                if (
-                    self.board[i][col][0] == "w"
-                    and self.turn == "black"
-                    or self.board[i][col][0] == "b"
-                    and self.turn == "white"
-                ):
-                    possible_moves.append(Movement((row, col), (i, col), self.board))
-                break
-
-            possible_moves.append(Movement((row, col), (i, col), self.board))
-
-        # moving left
-        for i in range(col - 1, -1, -1):
-            # stops if runs into another piece
-            if self.board[row][i]:
-                if (
-                    self.board[row][i][0] == "w"
-                    and self.turn == "black"
-                    or self.board[row][i][0] == "b"
-                    and self.turn == "white"
-                ):
-                    possible_moves.append(Movement((row, col), (row, i), self.board))
-                break
-
-            possible_moves.append(Movement((row, col), (row, i), self.board))
-
-        # moving right
-        for i in range(col + 1, len(self.board)):
-            # stops if runs into another piece
-            if self.board[row][i]:
-                if (
-                    self.board[row][i][0] == "w"
-                    and self.turn == "black"
-                    or self.board[row][i][0] == "b"
-                    and self.turn == "white"
-                ):
-                    possible_moves.append(Movement((row, col), (row, i), self.board))
-                break
-
-            possible_moves.append(Movement((row, col), (row, i), self.board))
-
-        return possible_moves
 
     def get_knight_moves(self, row: int, col: int) -> list:
         possible_moves = []
