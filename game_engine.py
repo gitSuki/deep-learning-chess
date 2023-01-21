@@ -2,112 +2,29 @@ import numpy as np
 
 from enums import *
 from chess_piece import *
+from game_board import game_board
 from game_movement import Movement
 
 
 class GameState:
     def __init__(self) -> None:
-        self.turn = WHITE
-        self.checkmate = False
-        self.stalemate = False
+        self.board = game_board()
         self.move_log = []
         self.move_methods = {
-            "pawn": self.get_pawn_moves,
-            "rook": self.get_rook_moves,
-            "knight": self.get_knight_moves,
-            "bishop": self.get_bishop_moves,
-            "queen": self.get_queen_moves,
-            "king": self.get_king_moves,
+            PAWN: self.get_pawn_moves,
+            ROOK: self.get_rook_moves,
+            KNIGHT: self.get_knight_moves,
+            BISHOP: self.get_bishop_moves,
+            QUEEN: self.get_queen_moves,
+            KING: self.get_king_moves,
         }
         self.king_locations = {
             WHITE: (7, 4),
             BLACK: (0, 4),
         }
-
-        self.board = np.array(
-            [
-                [
-                    Rook(BLACK, (0, 0)),
-                    Knight(BLACK, (0, 1)),
-                    Bishop(BLACK, (0, 2)),
-                    Queen(BLACK, (0, 3)),
-                    King(BLACK, (0, 4)),
-                    Bishop(BLACK, (0, 5)),
-                    Knight(BLACK, (0, 6)),
-                    Rook(BLACK, (0, 7)),
-                ],
-                [
-                    Pawn(BLACK, (1, 0)),
-                    Pawn(BLACK, (1, 1)),
-                    Pawn(BLACK, (1, 2)),
-                    Pawn(BLACK, (1, 3)),
-                    Pawn(BLACK, (1, 4)),
-                    Pawn(BLACK, (1, 5)),
-                    Pawn(BLACK, (1, 6)),
-                    Pawn(BLACK, (1, 7)),
-                ],
-                [
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                ],
-                [
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                ],
-                [
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                ],
-                [
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                ],
-                [
-                    Pawn(WHITE, (6, 0)),
-                    Pawn(WHITE, (6, 1)),
-                    Pawn(WHITE, (6, 2)),
-                    Pawn(WHITE, (6, 3)),
-                    Pawn(WHITE, (6, 4)),
-                    Pawn(WHITE, (6, 5)),
-                    Pawn(WHITE, (6, 6)),
-                    Pawn(WHITE, (6, 7)),
-                ],
-                [
-                    Rook(WHITE, (7, 0)),
-                    Knight(WHITE, (7, 1)),
-                    Bishop(WHITE, (7, 2)),
-                    Queen(WHITE, (7, 3)),
-                    King(WHITE, (7, 4)),
-                    Bishop(WHITE, (7, 5)),
-                    Knight(WHITE, (7, 6)),
-                    Rook(WHITE, (7, 7)),
-                ],
-            ]
-        )
+        self.turn = WHITE
+        self.checkmate = False
+        self.stalemate = False
 
     def swap_player_turn(self) -> None:
         """
