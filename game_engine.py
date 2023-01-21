@@ -1,4 +1,4 @@
-import game_movement as Movement
+from game_movement import Movement
 
 class GameState:
     def __init__(self) -> None:

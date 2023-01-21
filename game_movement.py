@@ -1,4 +1,8 @@
 class Movement:
+    """
+    Represents an individual move from a given start square to it's destination end square.
+    """
+
     def __init__(self, start_square: tuple, end_square: tuple, board: list) -> None:
         self.start_square = start_square
         self.end_square = end_square
@@ -18,16 +22,20 @@ class Movement:
         )
 
     def __str__(self):
-        str = f"Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}."
+        debug_string = f"Moving {self.moved_piece} from {self.start_square} to {self.end_square}, capturing {self.captured_piece}."
         if self.is_pawn_promotion:
-            str += f" Promotion choice: {self.promotion_choice}"
-        return str
+            debug_string += f" Promotion choice: {self.promotion_choice}"
+        return debug_string
 
     def pawn_promotion(self) -> bool:
-        w_pawn_can_promote = self.moved_piece == "w_pawn" and self.end_square[0] == 0
-        b_pawn_can_promote = self.moved_piece == "b_pawn" and self.end_square[0] == 7
+        white_pawn_can_promote = (
+            self.moved_piece == "w_pawn" and self.end_square[0] == 0
+        )
+        black_pawn_can_promote = (
+            self.moved_piece == "b_pawn" and self.end_square[0] == 7
+        )
 
-        if w_pawn_can_promote or b_pawn_can_promote:
+        if white_pawn_can_promote or black_pawn_can_promote:
             return True
         else:
             return False
