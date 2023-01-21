@@ -148,7 +148,7 @@ class GameState:
 
     def get_legal_moves(self) -> list:
         """
-        Calculates all moves, accounting for checks and checkmate
+        Calculates all moves, accounting for checks and checkmate.
         Explanation:
         1) Generates all the player's possible moves
         2) For each move, execute the move
@@ -158,13 +158,13 @@ class GameState:
         """
         players_possible_moves = self.get_possible_moves()
 
+        # loops through list of moves backwards to prevent bugs from occuring when deleting invalid moves
         for move in players_possible_moves[::-1]:
-            self.execute_move(move)
             # execute_move() automatically swaps player's turns, we need to reswap turns again otherwise our
             # helper methods will calculate for the wrong player
+            self.execute_move(move)
             self.swap_player_turn()
             would_put_king_in_check = self.in_check()
-
             if would_put_king_in_check:
                 players_possible_moves.remove(move)
 
@@ -185,12 +185,12 @@ class GameState:
 
     def in_check(self) -> bool:
         """
-        Calculates if the current player is in check
+        Calculates if the current player is in a check situation.
         """
-        if self.turn == "white":
-            return self.square_under_attack(self.king_locations["white"])
+        if self.turn == WHITE:
+            return self.square_under_attack(self.king_locations[WHITE])
         else:
-            return self.square_under_attack(self.king_locations["black"])
+            return self.square_under_attack(self.king_locations[BLACK])
 
     def square_under_attack(self, square: object) -> bool:
         """
@@ -199,8 +199,8 @@ class GameState:
         self.swap_player_turn()
         opponents_possible_moves = self.get_possible_moves()
 
-        for opponent_move in opponents_possible_moves:
-            square_is_under_attack = opponent_move.end_square == square
+        for move in opponents_possible_moves:
+            square_is_under_attack = move.end_square == square
             if square_is_under_attack:
                 self.swap_player_turn()
                 return True
@@ -209,26 +209,29 @@ class GameState:
 
     def get_possible_moves(self) -> list:
         """
-        Calculates all potential moves, regardless of checks and checkmate
+        Calculates all potential moves, regardless of checks and checkmate.
         """
         possible_moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
-                if self.board[row][col] == None:
+                current_square_is_empty = self.board[row][col] == None
+                if current_square_is_empty:
                     continue
 
-                controller = self.board[row][col][0]
-                piece = self.board[row][col][2:]
-                is_white = controller == "w" and self.turn == "white"
-                is_black = controller == "b" and self.turn == "black"
-
-                if is_white or is_black:
-                    move_method = self.move_methods[piece]
+                piece_team = self.board[row][col].team
+                piece_type = self.board[row][col].type
+                white_can_move = piece_team == WHITE and self.turn == WHITE
+                black_can_move = piece_team == BLACK and self.turn == BLACK
+                if white_can_move or black_can_move:
+                    move_method = self.move_methods[piece_type]
                     possible_moves += move_method(row, col)
 
         return possible_moves
 
     def update_king_locations(self, move: object) -> None:
+        """
+        Updates the dictionary that keeps track of the location for each teams king.
+        """
         if move.moved_piece.type == KING:
             if move.moved_piece.team == WHITE:
                 self.king_locations[WHITE] = move.end_square
