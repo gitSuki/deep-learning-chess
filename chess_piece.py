@@ -1,4 +1,4 @@
-from enums import *
+from constants import *
 
 
 class Piece:

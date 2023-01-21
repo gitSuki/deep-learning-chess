@@ -1,12 +1,13 @@
-import numpy as np
-
-from enums import *
+from constants import *
 from chess_piece import *
 from game_board import game_board
 from game_movement import Movement
 
 
 class GameState:
+    """
+    Represents the game engine and the current state of the game.
+    """
     def __init__(self) -> None:
         self.board = game_board()
         self.move_log = []

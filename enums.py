@@ -21,14 +21,3 @@ class Type(Enum):
     BISHOP = "bishop"
     QUEEN = "queen"
     KING = "king"
-
-
-WHITE = Team.WHITE.value
-BLACK = Team.BLACK.value
-
-PAWN = Type.PAWN.value
-ROOK = Type.ROOK.value
-KNIGHT = Type.KNIGHT.value
-BISHOP = Type.BISHOP.value
-QUEEN = Type.QUEEN.value
-KING = Type.KING.value
