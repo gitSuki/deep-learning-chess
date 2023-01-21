@@ -29,6 +29,7 @@ def main() -> None:
         is_human_turn = (game_state.turn == WHITE and white_is_player) or (
             game_state.turn == BLACK and black_is_player
         )
+        print(is_human_turn, game_over)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
@@ -38,6 +39,7 @@ def main() -> None:
                     should_be_animated = False
                     game_state.undo_move()
                     game_state_has_changed = True
+                    game_over = False
 
                 if e.key == pg.K_r:
                     game_state = GameState()
