@@ -105,10 +105,12 @@ def main() -> None:
 
         if game_state.checkmate:
             game_over = True
-            draw_text(screen, game_state.turn, "checkmate")
+            victor = BLACK if game_state.turn == WHITE else WHITE
+            draw_text(screen, victor, "checkmate")
         elif game_state.stalemate:
             game_over = True
-            draw_text(screen, game_state.turn, "stalemate")
+            victor = BLACK if game_state.turn == WHITE else WHITE
+            draw_text(screen, victor, "stalemate")
 
         clock.tick(FPS)
         pg.display.flip()

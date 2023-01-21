@@ -104,16 +104,13 @@ class GameState:
         """
         Calculates if the current player's king is in a check situation.
         """
-        test = 'lol'
         if self.turn == WHITE:
             for piece in self.players[WHITE].piece_list:
                 if piece.type == KING:
-                    print(piece, piece.type == KING, self.turn == WHITE)
                     return self.piece_under_attack(piece)
         else:
             for piece in self.players[BLACK].piece_list:
                 if piece.type == KING:
-                    print(piece, piece.type == KING, self.turn == BLACK)
                     return self.piece_under_attack(piece)
 
     def piece_under_attack(self, piece: object) -> bool:

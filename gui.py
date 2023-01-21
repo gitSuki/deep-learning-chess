@@ -175,7 +175,7 @@ def animate_move(move, game_state, screen, clock):
 
 
 def draw_text(screen, victor, victory_condition):
-    FONT_SIZE = 32
+    FONT_SIZE = 40
     font = pg.font.SysFont("calibri", FONT_SIZE, True, False)
     string = f"{victor} wins by {victory_condition}!".capitalize()
     text = font.render(string, 0, pg.Color("black"))
