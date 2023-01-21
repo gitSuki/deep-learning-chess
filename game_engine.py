@@ -3,13 +3,20 @@ import numpy as np
 from chess_piece import *
 from game_movement import Movement
 
-BLACK = Team.BLACK.value
 WHITE = Team.WHITE.value
+BLACK = Team.BLACK.value
+
+PAWN = Type.PAWN.value
+ROOK = Type.ROOK.value
+KNIGHT = Type.KNIGHT.value
+BISHOP = Type.BISHOP.value
+QUEEN = Type.QUEEN.value
+KING = Type.KING.value
 
 
 class GameState:
     def __init__(self) -> None:
-        self.turn = "white"
+        self.turn = WHITE
         self.checkmate = False
         self.stalemate = False
         self.move_log = []
@@ -22,94 +29,11 @@ class GameState:
             "king": self.get_king_moves,
         }
         self.king_locations = {
-            "white": (7, 4),
-            "black": (0, 4),
+            WHITE: (7, 4),
+            BLACK: (0, 4),
         }
 
-        # board is a 2d list representation of an 8x8 chess board
-        self.board = [
-            [
-                "b_rook",
-                "b_knight",
-                "b_bishop",
-                "b_queen",
-                "b_king",
-                "b_bishop",
-                "b_knight",
-                "b_rook",
-            ],
-            [
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-                "b_pawn",
-            ],
-            [
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            [
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            [
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            [
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            [
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-                "w_pawn",
-            ],
-            [
-                "w_rook",
-                "w_knight",
-                "w_bishop",
-                "w_queen",
-                "w_king",
-                "w_bishop",
-                "w_knight",
-                "w_rook",
-            ],
-        ]
-        self.board1 = np.array(
+        self.board = np.array(
             [
                 [
                     Rook(BLACK, (0, 0)),
@@ -195,7 +119,7 @@ class GameState:
         )
 
     def swap_player_turn(self) -> None:
-        self.turn = "black" if self.turn == "white" else "white"
+        self.turn = BLACK if self.turn == WHITE else WHITE
 
     def execute_move(self, move: object) -> None:
         self.board[move.start_square[0]][move.start_square[1]] = None
@@ -221,12 +145,6 @@ class GameState:
         self.swap_player_turn()
         self.checkmate = False
         self.stalemate = False
-
-    def update_king_locations(self, move: object) -> None:
-        if move.moved_piece == "w_king":
-            self.king_locations["white"] = move.end_square
-        elif move.moved_piece == "b_king":
-            self.king_locations["black"] = move.end_square
 
     def get_legal_moves(self) -> list:
         """
@@ -309,6 +227,13 @@ class GameState:
                     possible_moves += move_method(row, col)
 
         return possible_moves
+
+    def update_king_locations(self, move: object) -> None:
+        if move.moved_piece.type == KING:
+            if move.moved_piece.team == WHITE:
+                self.king_locations[WHITE] = move.end_square
+            elif move.moved_piece.team == BLACK:
+                self.king_locations[BLACK] = move.end_square
 
     def get_pawn_moves(self, row: int, col: int) -> list:
         possible_moves = []
