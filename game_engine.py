@@ -119,22 +119,33 @@ class GameState:
         )
 
     def swap_player_turn(self) -> None:
+        """
+        Swaps the current player in the game between white or black.
+        """
         self.turn = BLACK if self.turn == WHITE else WHITE
 
     def execute_move(self, move: object) -> None:
+        """
+        Executes the move given as an argument.
+        """
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
         self.update_king_locations(move)
 
         if move.is_pawn_promotion:
-            controller = move.moved_piece[0]
-            promoted_piece = f"{controller}_{move.promotion_choice}"
+            # Automatically promotes to Queen
+            # promoted_piece = move.promotion_choice
+            team = move.moved_piece.team
+            promoted_piece = Queen(team, move.end_square)
             self.board[move.end_square[0]][move.end_square[1]] = promoted_piece
 
         self.swap_player_turn()
 
     def undo_move(self) -> None:
+        """
+        Undoes the most recent move in the move log.
+        """
         if len(self.move_log) == 0:
             return
 
@@ -148,15 +159,12 @@ class GameState:
 
     def get_legal_moves(self) -> list:
         """
-        Calculates all moves, accounting for checks and checkmate.
-        Explanation:
-        1) Generates all the player's possible moves
-        2) For each move, execute the move
-        3) Generate all opponent's moves
-        4) For each of the opponent's moves, see if they will check the player's King
-        5) If any of the opponent's move check's the player's king, the player's move is not valid
+        Calculates all legal moves, accounting for checks and checkmate.
         """
         players_possible_moves = self.get_possible_moves()
+
+        if len(players_possible_moves) == 0:
+            self.check_gameover_conditions()
 
         # loops through list of moves backwards to prevent bugs from occuring when deleting invalid moves
         for move in players_possible_moves[::-1]:
@@ -164,28 +172,30 @@ class GameState:
             # helper methods will calculate for the wrong player
             self.execute_move(move)
             self.swap_player_turn()
-            would_put_king_in_check = self.in_check()
-            if would_put_king_in_check:
+            move_would_put_king_in_check = self.king_in_check()
+            if move_would_put_king_in_check:
                 players_possible_moves.remove(move)
-
             self.swap_player_turn()
             self.undo_move()
-
-        if len(players_possible_moves) == 0:
-            king_is_in_check = self.in_check()
-            if king_is_in_check:
-                self.checkmate = True
-            else:
-                self.stalemate = True
 
         for move in players_possible_moves:
             print(move)
         print(" ")
         return players_possible_moves
-
-    def in_check(self) -> bool:
+    
+    def check_gameover_conditions(self) -> None:
         """
-        Calculates if the current player is in a check situation.
+        Checks if the game is in either a checkmate or stalemate situation.
+        """
+        king_is_in_check = self.king_in_check()
+        if king_is_in_check:
+            self.checkmate = True
+        else:
+            self.stalemate = True
+
+    def king_in_check(self) -> bool:
+        """
+        Calculates if the current player's king is in a check situation.
         """
         if self.turn == WHITE:
             return self.square_under_attack(self.king_locations[WHITE])
@@ -214,17 +224,18 @@ class GameState:
         possible_moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
-                current_square_is_empty = self.board[row][col] == None
-                if current_square_is_empty:
+                square_is_empty = self.board[row][col] == None
+                if square_is_empty:
                     continue
 
                 piece_team = self.board[row][col].team
                 piece_type = self.board[row][col].type
-                white_can_move = piece_team == WHITE and self.turn == WHITE
-                black_can_move = piece_team == BLACK and self.turn == BLACK
-                if white_can_move or black_can_move:
-                    move_method = self.move_methods[piece_type]
-                    possible_moves += move_method(row, col)
+                piece_is_opponents = piece_team != self.turn
+                if piece_is_opponents:
+                    continue
+
+                move_method = self.move_methods[piece_type]
+                possible_moves += move_method(row, col)
 
         return possible_moves
 
