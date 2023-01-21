@@ -32,6 +32,7 @@ class GameState:
         """
         Executes the move given as an argument.
         """
+        move.moved_piece.location = move.end_square
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
@@ -54,6 +55,7 @@ class GameState:
             return
 
         move = self.move_log.pop()
+        move.moved_piece.location = move.start_square
         self.board[move.end_square[0]][move.end_square[1]] = move.captured_piece
         self.board[move.start_square[0]][move.start_square[1]] = move.moved_piece
         self.players[self.turn].update_piece_list(self.board)
@@ -102,13 +104,16 @@ class GameState:
         """
         Calculates if the current player's king is in a check situation.
         """
+        test = 'lol'
         if self.turn == WHITE:
             for piece in self.players[WHITE].piece_list:
                 if piece.type == KING:
+                    print(piece, piece.type == KING, self.turn == WHITE)
                     return self.piece_under_attack(piece)
         else:
             for piece in self.players[BLACK].piece_list:
                 if piece.type == KING:
+                    print(piece, piece.type == KING, self.turn == BLACK)
                     return self.piece_under_attack(piece)
 
     def piece_under_attack(self, piece: object) -> bool:
@@ -119,7 +124,7 @@ class GameState:
         opponents_possible_moves = self.get_possible_moves()
 
         for move in opponents_possible_moves:
-            square_is_under_attack = move.end_square == piece.location
+            square_is_under_attack = piece.location == move.end_square
             if square_is_under_attack:
                 self.swap_player_turn()
                 return True
@@ -143,5 +148,4 @@ class GameState:
                     continue
 
                 possible_moves += piece.get_moves(row, col, self.board)
-
         return possible_moves

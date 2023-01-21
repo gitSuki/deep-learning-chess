@@ -49,7 +49,7 @@ class Piece:
 
     def orthogonal_down(self, row: int, col: int, board: list) -> list:
         moves = []
-        for i in np.arange(row + 1, len(board) - 1):
+        for i in np.arange(row + 1, len(board)):
             square_is_occupied = board[i][col]
             if square_is_occupied:
                 is_enemy = self.detect_enemy_piece(board[i][col])
