@@ -32,7 +32,9 @@ def main() -> None:
             print(piece)
 
     while is_running:
-        is_human_turn = (game_state.turn == "white" and white_is_player) or (game_state.turn == "black" and black_is_player)
+        is_human_turn = (game_state.turn == "white" and white_is_player) or (
+            game_state.turn == "black" and black_is_player
+        )
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
@@ -100,15 +102,7 @@ def main() -> None:
 
         if game_state_has_changed:
             if should_be_animated:
-                gui.animate_move(
-                    game_state.move_log[-1],
-                    game_state,
-                    screen,
-                    IMAGES,
-                    GRID_DIMENSION,
-                    SQUARE_SIZE,
-                    clock,
-                )
+                gui.animate_move(game_state.move_log[-1], game_state, screen, clock)
             legal_moves = game_state.get_legal_moves()
             should_be_animated = False
             game_state_has_changed = False
@@ -125,10 +119,10 @@ def main() -> None:
 
         if game_state.checkmate:
             game_over = True
-            gui.draw_text(screen, game_state.turn, "checkmate", GRID_SIZE)
+            gui.draw_text(screen, game_state.turn, "checkmate")
         elif game_state.stalemate:
             game_over = True
-            gui.draw_text(screen, game_state.turn, "stalemate", GRID_SIZE)
+            gui.draw_text(screen, game_state.turn, "stalemate")
 
         clock.tick(FPS)
         pg.display.flip()

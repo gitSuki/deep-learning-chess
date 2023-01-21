@@ -1,5 +1,7 @@
 import pygame as pg
 
+from constants import *
+
 
 def load_images(square_size: int) -> list:
     images_dict = {}
@@ -18,9 +20,9 @@ def load_images(square_size: int) -> list:
         "b_king",
     ]
 
-    for chess_piece_image in image_list:
-        images_dict[chess_piece_image] = pg.transform.scale(
-            pg.image.load(f"./assets/{chess_piece_image}.png"),
+    for image in image_list:
+        images_dict[image] = pg.transform.scale(
+            pg.image.load(f"./assets/{image}.png"),
             (square_size, square_size),
         )
     return images_dict
@@ -32,21 +34,19 @@ def draw_game_state(
     legal_moves: list,
     selected_square: tuple,
     images: list,
-    grid_dimension: int,
-    square_size: int,
 ) -> None:
-    draw_board(screen, grid_dimension, square_size)
-    draw_pieces(screen, game_state, images, grid_dimension, square_size)
-    highlight_squares(screen, game_state, legal_moves, selected_square, square_size)
-    highlight_last_move(screen, game_state, square_size)
+    draw_board(screen)
+    draw_pieces(screen, game_state, images)
+    highlight_squares(screen, game_state, legal_moves, selected_square)
+    highlight_last_move(screen, game_state)
 
 
-def draw_board(screen: object, grid_dimension: int, square_size: int):
+def draw_board(screen: object):
     """
     Draws all the background squares on the board. The top left square is always light and the colors alternate between light and dark.
     """
-    for row in range(grid_dimension):
-        for col in range(grid_dimension):
+    for row in range(GRID_DIMENSION):
+        for col in range(GRID_DIMENSION):
             location_is_even = (row + col) % 2
             if location_is_even:
                 color = pg.Color("white")
@@ -55,38 +55,28 @@ def draw_board(screen: object, grid_dimension: int, square_size: int):
             pg.draw.rect(
                 screen,
                 color,
-                pg.Rect(col * square_size, row * square_size, square_size, square_size),
+                pg.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE),
             )
 
 
-def draw_pieces(
-    screen: object,
-    game_state: object,
-    images: list,
-    grid_dimension: int,
-    square_size: int,
-) -> None:
+def draw_pieces(screen: object, game_state: object, images: list) -> None:
     """
     Draws all the chess pieces on the board using based on the current game_state.
     """
-    for row in range(grid_dimension):
-        for col in range(grid_dimension):
+    for row in range(GRID_DIMENSION):
+        for col in range(GRID_DIMENSION):
             piece = game_state.board[row][col]
             if piece:
                 screen.blit(
                     images[piece],
                     pg.Rect(
-                        col * square_size, row * square_size, square_size, square_size
+                        col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
                     ),
                 )
 
 
 def highlight_squares(
-    screen: object,
-    game_state: object,
-    legal_moves: list,
-    selected_square: tuple,
-    square_size: int,
+    screen: object, game_state: object, legal_moves: list, selected_square: tuple
 ) -> None:
     """
     Highlights the selected square and all valid movements the piece may make
@@ -101,17 +91,14 @@ def highlight_squares(
             == game_state.turn[0]
         )
         if selected_piece_is_players:
-            highlight_individual_square(screen, "yellow", selected_square, square_size)
+            highlight_individual_square(screen, "yellow", selected_square, SQUARE_SIZE)
             highlight_movement_options(
-                screen, legal_moves, selected_square, square_size
+                screen, legal_moves, selected_square, SQUARE_SIZE
             )
 
 
 def highlight_movement_options(
-    screen: object,
-    legal_moves: list,
-    selected_square: tuple,
-    square_size: int,
+    screen: object, legal_moves: list, selected_square: tuple
 ) -> None:
     """
     Highlights all valid movements the piece may make
@@ -121,43 +108,36 @@ def highlight_movement_options(
         if move.start_square == selected_square:
             if move.captured_piece:
                 color = "red"
-            highlight_individual_square(screen, color, move.end_square, square_size)
+            highlight_individual_square(screen, color, move.end_square, SQUARE_SIZE)
 
 
 def highlight_individual_square(
-    screen: object,
-    color: str,
-    square_location: tuple,
-    square_size: int,
+    screen: object, color: str, square_location: tuple
 ) -> None:
     """
     Highlights a specific individual square
     """
-    highlight_surface = pg.Surface((square_size, square_size))
+    highlight_surface = pg.Surface((SQUARE_SIZE, SQUARE_SIZE))
     highlight_surface.set_alpha(100)
     pixel_coordinates = (
-        square_location[1] * square_size,
-        square_location[0] * square_size,
+        square_location[1] * SQUARE_SIZE,
+        square_location[0] * SQUARE_SIZE,
     )
     highlight_surface.fill(pg.Color(color))
     screen.blit(highlight_surface, pixel_coordinates)
 
 
-def highlight_last_move(
-    screen: object,
-    game_state: object,
-    square_size: int,
-):
+def highlight_last_move(screen: object, game_state: object):
     if len(game_state.move_log) >= 1:
         highlight_individual_square(
-            screen, "yellow", game_state.move_log[-1].start_square, square_size
+            screen, "yellow", game_state.move_log[-1].start_square, SQUARE_SIZE
         )
         highlight_individual_square(
-            screen, "yellow", game_state.move_log[-1].end_square, square_size
+            screen, "yellow", game_state.move_log[-1].end_square, SQUARE_SIZE
         )
 
 
-def animate_move(move, game_state, screen, images, grid_dimension, square_size, clock):
+def animate_move(move, game_state, screen, clock):
     change_row = move.end_square[0] - move.start_square[0]
     change_col = move.end_square[1] - move.start_square[1]
     frames_per_square = 10
@@ -166,8 +146,8 @@ def animate_move(move, game_state, screen, images, grid_dimension, square_size, 
     for frame in range(frame_count + 1):
         row = move.start_square[0] + change_row * frame / frame_count
         col = move.start_square[1] + change_col * frame / frame_count
-        draw_board(screen, grid_dimension, square_size)
-        draw_pieces(screen, game_state, images, grid_dimension, square_size)
+        draw_board(screen, GRID_DIMENSION, SQUARE_SIZE)
+        draw_pieces(screen, game_state, IMAGES, GRID_DIMENSION, SQUARE_SIZE)
 
         location_is_even = (move.end_square[0] + move.end_square[1]) % 2
         if location_is_even:
@@ -175,26 +155,30 @@ def animate_move(move, game_state, screen, images, grid_dimension, square_size, 
         else:
             color = pg.Color("gray")
         end_square = pg.Rect(
-            move.end_square[1] * square_size,
-            move.end_square[0] * square_size,
-            square_size,
-            square_size,
+            move.end_square[1] * SQUARE_SIZE,
+            move.end_square[0] * SQUARE_SIZE,
+            SQUARE_SIZE,
+            SQUARE_SIZE,
         )
         pg.draw.rect(screen, color, end_square)
 
         if move.captured_piece:
-            screen.blit(images[move.captured_piece], end_square)
+            screen.blit(IMAGES[move.captured_piece], end_square)
 
         animated_piece_location = pg.Rect(
-            col * square_size, row * square_size, square_size, square_size
+            col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
         )
-        screen.blit(images[move.moved_piece], animated_piece_location)
+        screen.blit(IMAGES[move.moved_piece], animated_piece_location)
         pg.display.flip()
         clock.tick(60)
 
-def draw_text(screen, victor, victory_condition, grid_size):
-    font = pg.font.SysFont("calibri", 32, True, False)
+
+def draw_text(screen, victor, victory_condition):
+    FONT_SIZE = 32
+    font = pg.font.SysFont("calibri", FONT_SIZE, True, False)
     string = f"{victor} wins by {victory_condition}!".capitalize()
     text = font.render(string, 0, pg.Color("black"))
-    text_location = pg.Rect(0, 0, grid_size, grid_size).move(grid_size/2 - text.get_width()/2, grid_size/2 - text.get_height()/2)
+    text_location = pg.Rect(0, 0, BOARD_SIZE, BOARD_SIZE).move(
+        BOARD_SIZE / 2 - text.get_width() / 2, BOARD_SIZE / 2 - text.get_height() / 2
+    )
     screen.blit(text, text_location)
