@@ -21,12 +21,38 @@ class Piece:
     def get_moves(self, row: int, col: int, board: list) -> list:
         return []
 
+    def orthogonal_up_movement(self, row: int, col: int, board: list) -> list:
+        possible_moves = []
+        for i in np.arange(row - 1, -1, -1):
+            square_is_occupied = board[i][col]
+            if square_is_occupied:
+                is_enemy = self.detect_enemy_piece(board[i][col])
+                if is_enemy:
+                    possible_moves.append(Movement((row, col), (i, col), board))
+                break
+
+            possible_moves.append(Movement((row, col), (i, col), board))
+        return possible_moves
+
+    def orthogonal_down_movement(self, row: int, col: int, board: list) -> list:
+        possible_moves = []
+        for i in np.arange(row + 1, len(board) - 1):
+            square_is_occupied = board[i][col]
+            if square_is_occupied:
+                is_enemy = self.detect_enemy_piece(board[i][col])
+                if is_enemy:
+                    possible_moves.append(Movement((row, col), (i, col), board))
+                break
+
+            possible_moves.append(Movement((row, col), (i, col), board))
+        return possible_moves
+
     def orthogonal_left_movement(self, row: int, col: int, board: list) -> list:
         possible_moves = []
         for i in np.arange(col - 1, -1, -1):
             square_is_occupied = board[row][i]
             if square_is_occupied:
-                is_enemy = self.detect_enemy_piece(row, i, board)
+                is_enemy = self.detect_enemy_piece(board[row][i])
                 if is_enemy:
                     possible_moves.append(Movement((row, col), (row, i), board))
                 break
@@ -34,9 +60,22 @@ class Piece:
             possible_moves.append(Movement((row, col), (row, i), board))
         return possible_moves
 
-    def detect_enemy_piece(self, row: int, col: int, board: list) -> bool:
-        return (board[row][col] == WHITE and self.team == BLACK) or (
-            board[row][col].team == BLACK and self.team == WHITE
+    def orthogonal_right_movement(self, row: int, col: int, board: list) -> list:
+        possible_moves = []
+        for i in np.arange(col + 1, len(board)):
+            square_is_occupied = board[row][i]
+            if square_is_occupied:
+                is_enemy = self.detect_enemy_piece(board[row][i])
+                if is_enemy:
+                    possible_moves.append(Movement((row, col), (row, i), board))
+                break
+
+            possible_moves.append(Movement((row, col), (row, i), board))
+        return possible_moves
+
+    def detect_enemy_piece(self, enemy_piece: tuple) -> bool:
+        return (enemy_piece.team == WHITE and self.team == BLACK) or (
+            enemy_piece.team == BLACK and self.team == WHITE
         )
 
 
@@ -44,8 +83,7 @@ class Pawn(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, PAWN, location)
 
-    def get_moves(self, row: int, col: int, board: list, ) -> list:
-        print(f"Hello world. {self.location}")
+    def get_moves(self, row: int, col: int, board: list) -> list:
         possible_moves = []
         if self.team == WHITE:
             # move forward
@@ -105,58 +143,13 @@ class Rook(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, ROOK, location)
 
-    # def get_moves(self, row: int, col: int, board: list) -> list:
-    #     possible_moves = []
-
-    #     # moving down
-    #     for i in np.arange(row + 1, len(board) - 1):
-    #         if board[i][col]:
-    #             if (
-    #                 board[i][col].team == WHITE
-    #                 and self.team == BLACK
-    #                 or board[i][col].team == BLACK
-    #                 and self.team == BLACK
-    #             ):
-    #                 possible_moves.append(Movement((row, col), (i, col), board))
-    #             break
-
-    #         possible_moves.append(Movement((row, col), (i, col), board))
-
-    #     # moving up
-    #     for i in np.arange(row - 1, -1, -1):
-    #         # stops if runs into another piece
-    #         if board[i][col]:
-    #             if (
-    #                 board[i][col].team == WHITE
-    #                 and self.team == BLACK
-    #                 or board[i][col].team == BLACK
-    #                 and self.team == WHITE
-    #             ):
-    #                 possible_moves.append(Movement((row, col), (i, col), board))
-    #             break
-
-    #         possible_moves.append(Movement((row, col), (i, col), board))
-
-    #     # moving left
-    #     est = self.orthogonal_left_movement(row, col, board)
-    #     print(est)
-
-    #     # moving right
-    #     for i in np.arange(col + 1, len(board)):
-    #         # stops if runs into another piece
-    #         if board[row][i]:
-    #             if (
-    #                 board[row][i].team == WHITE
-    #                 and self.team == BLACK
-    #                 or board[row][i].team == BLACK
-    #                 and self.team == WHITE
-    #             ):
-    #                 possible_moves.append(Movement((row, col), (row, i), board))
-    #             break
-
-    #         possible_moves.append(Movement((row, col), (row, i), board))
-
-    #     return possible_moves
+    def get_moves(self, row: int, col: int, board: list) -> list:
+        possible_moves = []
+        possible_moves += self.orthogonal_up_movement(row, col, board)
+        possible_moves += self.orthogonal_left_movement(row, col, board)
+        possible_moves += self.orthogonal_down_movement(row, col, board)
+        possible_moves += self.orthogonal_right_movement(row, col, board)
+        return possible_moves
 
 
 class Knight(Piece):
