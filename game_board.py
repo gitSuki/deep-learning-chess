@@ -1,7 +1,7 @@
 import numpy as np
 
 from enums import *
-from chess_piece import *
+from piece import *
 
 
 def game_board() -> np.array:

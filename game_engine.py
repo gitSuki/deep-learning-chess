@@ -1,9 +1,9 @@
 import numpy as np
 
 from constants import *
-from chess_piece import *
+from piece import *
+from players import Player
 from game_board import game_board
-from game_movement import Movement
 
 
 class GameState:
@@ -13,11 +13,11 @@ class GameState:
 
     def __init__(self) -> None:
         self.board = game_board()
-        self.move_log = []
-        self.king_locations = {
-            WHITE: (7, 4),
-            BLACK: (0, 4),
+        self.players = {
+            WHITE: Player(WHITE, [], True),
+            BLACK: Player(BLACK, [], True),
         }
+        self.move_log = []
         self.turn = WHITE
         self.checkmate = False
         self.stalemate = False
@@ -35,7 +35,7 @@ class GameState:
         self.board[move.start_square[0]][move.start_square[1]] = None
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
-        self.update_king_locations(move)
+        self.players[self.turn].update_piece_list(self.board)
 
         if move.is_pawn_promotion:
             # Automatically promotes to Queen
@@ -56,7 +56,7 @@ class GameState:
         move = self.move_log.pop()
         self.board[move.end_square[0]][move.end_square[1]] = move.captured_piece
         self.board[move.start_square[0]][move.start_square[1]] = move.moved_piece
-        self.update_king_locations(move)
+        self.players[self.turn].update_piece_list(self.board)
         self.swap_player_turn()
         self.checkmate = False
         self.stalemate = False
@@ -66,9 +66,6 @@ class GameState:
         Calculates all legal moves, accounting for checks and checkmate.
         """
         players_possible_moves = self.get_possible_moves()
-
-        if len(players_possible_moves) == 0:
-            self.check_gameover_conditions()
 
         # loops through list of moves backwards to prevent bugs from occuring when deleting invalid moves
         for move in players_possible_moves[::-1]:
@@ -82,9 +79,13 @@ class GameState:
             self.swap_player_turn()
             self.undo_move()
 
-        for move in players_possible_moves:
-            print(move)
-        print(" ")
+        if len(players_possible_moves) == 0:
+            self.check_gameover_conditions()
+
+        # for move in players_possible_moves:
+        #     print(move)
+        # print(len(players_possible_moves))
+        # print(" ")
         return players_possible_moves
 
     def check_gameover_conditions(self) -> None:
@@ -102,19 +103,23 @@ class GameState:
         Calculates if the current player's king is in a check situation.
         """
         if self.turn == WHITE:
-            return self.square_under_attack(self.king_locations[WHITE])
+            for piece in self.players[WHITE].piece_list:
+                if piece.type == KING:
+                    return self.piece_under_attack(piece)
         else:
-            return self.square_under_attack(self.king_locations[BLACK])
+            for piece in self.players[BLACK].piece_list:
+                if piece.type == KING:
+                    return self.piece_under_attack(piece)
 
-    def square_under_attack(self, square: object) -> bool:
+    def piece_under_attack(self, piece: object) -> bool:
         """
-        Calculates if the square given as an argument could come under attack by the opponent.
+        Calculates if the piece given as an argument could come under attack by the opponent.
         """
         self.swap_player_turn()
         opponents_possible_moves = self.get_possible_moves()
 
         for move in opponents_possible_moves:
-            square_is_under_attack = move.end_square == square
+            square_is_under_attack = move.end_square == piece.location
             if square_is_under_attack:
                 self.swap_player_turn()
                 return True
@@ -140,13 +145,3 @@ class GameState:
                 possible_moves += piece.get_moves(row, col, self.board)
 
         return possible_moves
-
-    def update_king_locations(self, move: object) -> None:
-        """
-        Updates the dictionary that keeps track of the location for each teams king.
-        """
-        if move.moved_piece.type == KING:
-            if move.moved_piece.team == WHITE:
-                self.king_locations[WHITE] = move.end_square
-            elif move.moved_piece.team == BLACK:
-                self.king_locations[BLACK] = move.end_square
