@@ -21,3 +21,17 @@ class Type(Enum):
     BISHOP = "bishop"
     QUEEN = "queen"
     KING = "king"
+
+
+class Piece:
+    """
+    Represents an individual chess piece on the game board
+    """
+
+    def __init__(self, team: str, type: str, location: tuple) -> None:
+        self.team = team
+        self.type = type
+        self.location = location
+
+    def __str__(self) -> str:
+        return f"{self.team} {self.type} at {self.location}"
