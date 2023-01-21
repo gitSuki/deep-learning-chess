@@ -70,9 +70,8 @@ def draw_pieces(screen: object, game_state: object) -> None:
         for col in np.arange(GRID_DIMENSION):
             piece = game_state.board[row][col]
             if piece:
-                image = f"{piece.team[0]}_{piece.type}"
                 screen.blit(
-                    IMAGES[image],
+                    IMAGES[piece.image_code],
                     pg.Rect(
                         col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
                     ),
@@ -110,7 +109,7 @@ def highlight_movement_options(
         if move.start_square == selected_square:
             if move.captured_piece:
                 color = "red"
-            highlight_individual_square(screen, color, move.end_square, SQUARE_SIZE)
+            highlight_individual_square(screen, color, move.end_square)
 
 
 def highlight_individual_square(
@@ -132,10 +131,10 @@ def highlight_individual_square(
 def highlight_last_move(screen: object, game_state: object):
     if len(game_state.move_log) >= 1:
         highlight_individual_square(
-            screen, "yellow", game_state.move_log[-1].start_square, SQUARE_SIZE
+            screen, "yellow", game_state.move_log[-1].start_square
         )
         highlight_individual_square(
-            screen, "yellow", game_state.move_log[-1].end_square, SQUARE_SIZE
+            screen, "yellow", game_state.move_log[-1].end_square
         )
 
 
@@ -165,12 +164,12 @@ def animate_move(move, game_state, screen, clock):
         pg.draw.rect(screen, color, end_square)
 
         if move.captured_piece:
-            screen.blit(IMAGES[move.captured_piece], end_square)
+            screen.blit(IMAGES[move.captured_piece.image_code], end_square)
 
         animated_piece_location = pg.Rect(
             col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
         )
-        screen.blit(IMAGES[move.moved_piece], animated_piece_location)
+        screen.blit(IMAGES[move.moved_piece.image_code], animated_piece_location)
         pg.display.flip()
         clock.tick(60)
 

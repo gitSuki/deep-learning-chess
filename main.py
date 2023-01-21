@@ -14,7 +14,6 @@ def main() -> None:
     clock = pg.time.Clock()
     game_state = GameState()
     legal_moves = game_state.get_legal_moves()
-    legal_moves = []
     selected_square = ()  # tuple to represent (row, col) of last selected square
     select_log = []
     is_running = True

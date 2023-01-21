@@ -137,7 +137,7 @@ class GameState:
                 if piece_is_opponents:
                     continue
 
-                possible_moves += piece.get_moves(self.board, row, col)
+                possible_moves += piece.get_moves(row, col, self.board)
 
         return possible_moves
 
