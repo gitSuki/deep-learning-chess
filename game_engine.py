@@ -1,4 +1,11 @@
+import numpy as np
+
+from chess_piece import *
 from game_movement import Movement
+
+BLACK = Team.BLACK.value
+WHITE = Team.WHITE.value
+
 
 class GameState:
     def __init__(self) -> None:
