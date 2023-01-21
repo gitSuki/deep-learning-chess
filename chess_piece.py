@@ -12,7 +12,7 @@ class Team(Enum):
 
 class Type(Enum):
     """
-    Defines all possible types of chess pieces
+    Defines all possible types of chess pieces.
     """
 
     PAWN = "pawn"
@@ -25,7 +25,7 @@ class Type(Enum):
 
 class Piece:
     """
-    Represents an individual chess piece on the game board
+    Represents an individual chess piece on the game board.
     """
 
     def __init__(self, team: str, type: str, location: tuple) -> None:
@@ -35,3 +35,33 @@ class Piece:
 
     def __str__(self) -> str:
         return f"{self.team} {self.type} at {self.location}"
+
+
+class Pawn(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.PAWN.value, location)
+
+
+class Rook(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.ROOK.value, location)
+
+
+class Knight(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.KNIGHT.value, location)
+
+
+class Bishop(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.BISHOP.value, location)
+
+
+class Queen(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.QUEEN.value, location)
+
+
+class King(Piece):
+    def __init__(self, team: str, location: tuple) -> None:
+        super().__init__(team, Type.KING.value, location)
