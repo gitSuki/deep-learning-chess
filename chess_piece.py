@@ -1,26 +1,4 @@
-from enum import Enum
-
-
-class Team(Enum):
-    """
-    Defines both teams involved in the game.
-    """
-
-    WHITE = "white"
-    BLACK = "black"
-
-
-class Type(Enum):
-    """
-    Defines all possible types of chess pieces.
-    """
-
-    PAWN = "pawn"
-    ROOK = "rook"
-    KNIGHT = "knight"
-    BISHOP = "bishop"
-    QUEEN = "queen"
-    KING = "king"
+from enums import *
 
 
 class Piece:
@@ -39,29 +17,29 @@ class Piece:
 
 class Pawn(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.PAWN.value, location)
+        super().__init__(team, PAWN, location)
 
 
 class Rook(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.ROOK.value, location)
+        super().__init__(team, ROOK, location)
 
 
 class Knight(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.KNIGHT.value, location)
+        super().__init__(team, KNIGHT, location)
 
 
 class Bishop(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.BISHOP.value, location)
+        super().__init__(team, BISHOP, location)
 
 
 class Queen(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.QUEEN.value, location)
+        super().__init__(team, QUEEN, location)
 
 
 class King(Piece):
     def __init__(self, team: str, location: tuple) -> None:
-        super().__init__(team, Type.KING.value, location)
+        super().__init__(team, KING, location)

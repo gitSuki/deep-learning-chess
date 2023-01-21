@@ -1,17 +1,8 @@
 import numpy as np
 
+from enums import *
 from chess_piece import *
 from game_movement import Movement
-
-WHITE = Team.WHITE.value
-BLACK = Team.BLACK.value
-
-PAWN = Type.PAWN.value
-ROOK = Type.ROOK.value
-KNIGHT = Type.KNIGHT.value
-BISHOP = Type.BISHOP.value
-QUEEN = Type.QUEEN.value
-KING = Type.KING.value
 
 
 class GameState:
@@ -182,7 +173,7 @@ class GameState:
             print(move)
         print(" ")
         return players_possible_moves
-    
+
     def check_gameover_conditions(self) -> None:
         """
         Checks if the game is in either a checkmate or stalemate situation.
