@@ -22,14 +22,13 @@ def main() -> None:
         False  # used to recalculate legal moves any time the board changes
     )
     white_is_player = True
-    black_is_player = True
+    black_is_player = False
     game_over = False
 
     while is_running:
         is_human_turn = (game_state.turn == WHITE and white_is_player) or (
             game_state.turn == BLACK and black_is_player
         )
-        print(is_human_turn, game_over)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 is_running = False
@@ -40,6 +39,20 @@ def main() -> None:
                     game_state.undo_move()
                     game_state_has_changed = True
                     game_over = False
+                    # go back two moves if playing against an AI
+                    if (
+                        game_state.turn == BLACK
+                        and white_is_player
+                        and not black_is_player
+                    ) or (
+                        game_state.turn == WHITE
+                        and black_is_player
+                        and not white_is_player
+                    ):
+                        should_be_animated = False
+                        game_state.undo_move()
+                        game_state_has_changed = True
+                        game_over = False
 
                 if e.key == pg.K_r:
                     game_state = GameState()
