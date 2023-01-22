@@ -83,11 +83,6 @@ class GameState:
 
         if len(players_possible_moves) == 0:
             self.check_gameover_conditions()
-
-        # for move in players_possible_moves:
-        #     print(move)
-        # print(len(players_possible_moves))
-        # print(" ")
         return players_possible_moves
 
     def check_gameover_conditions(self) -> None:
@@ -121,8 +116,8 @@ class GameState:
         opponents_possible_moves = self.get_possible_moves()
 
         for move in opponents_possible_moves:
-            square_is_under_attack = piece.location == move.end_square
-            if square_is_under_attack:
+            piece_is_under_attack = piece.location == move.end_square
+            if piece_is_under_attack:
                 self.swap_player_turn()
                 return True
         self.swap_player_turn()

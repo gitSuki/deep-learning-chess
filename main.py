@@ -103,6 +103,7 @@ def main() -> None:
                         # prevents the user from having to click twice if they made an invalid move
                         select_log = [selected_square]
 
+        # AI movement
         if not is_human_turn and not game_over:
             move = find_random_move(legal_moves)
             game_state.execute_move(move)

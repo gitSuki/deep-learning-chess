@@ -13,7 +13,9 @@ class Player:
         piece_list = []
         for row in np.arange(len(board)):
             for col in np.arange(len(board[row])):
-                if board[row][col]:
-                    if board[row][col].team == self.team:
+                piece_exists = board[row][col]
+                if piece_exists:
+                    piece_is_player_team = board[row][col].team == self.team
+                    if piece_is_player_team:
                         piece_list.append(board[row][col])
         self.piece_list = piece_list
