@@ -7,13 +7,13 @@ class Player:
     def __init__(self, team: str, is_human: bool) -> None:
         self.team = team
         self.is_human = is_human
-        self._piece_list = []
+        self.piece_list = []
 
     def update_piece_list(self, board: list) -> None:
         """
         Update's the player's piece list based on the board given as an argument.
         """
-        self._piece_list = self._traverse_board(board)
+        self.piece_list = self._traverse_board(board)
 
     def _traverse_board(self, board: list) -> list:
         """

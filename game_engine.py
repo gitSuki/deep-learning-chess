@@ -2,7 +2,7 @@ import numpy as np
 
 from constants import *
 from piece import *
-from players import Player
+from player import Player
 from game_board import game_board
 
 
@@ -14,8 +14,8 @@ class GameState:
     def __init__(self) -> None:
         self.board = game_board()
         self.players = {
-            WHITE: Player(WHITE, [], True),
-            BLACK: Player(BLACK, [], True),
+            WHITE: Player(WHITE, True),
+            BLACK: Player(BLACK, True),
         }
         self.move_log = []
         self.turn = WHITE
