@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from game_movement import Movement
+from movement import Movement
 
 
 class Piece:

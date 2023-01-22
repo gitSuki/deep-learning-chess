@@ -3,8 +3,8 @@ import pygame as pg
 from constants import *
 from game_engine import GameState
 from gui import draw_game_state, draw_text, animate_move
-from game_movement import Movement
-from game_ai import find_random_move
+from movement import Movement
+from ai import find_random_move
 
 pg.init()
 
@@ -21,8 +21,8 @@ def main() -> None:
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
-    white_is_player = True
-    black_is_player = False
+    white_is_player = False
+    black_is_player = True
     game_over = False
 
     while is_running:
