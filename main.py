@@ -4,7 +4,7 @@ from constants import *
 from game_engine import GameState
 from gui import draw_game_state, draw_text, animate_move
 from movement import Movement
-from ai import find_random_move
+from ai import find_random_move, find_best_move
 
 pg.init()
 
@@ -22,7 +22,7 @@ def main() -> None:
         False  # used to recalculate legal moves any time the board changes
     )
     white_is_player = False
-    black_is_player = True
+    black_is_player = False
     game_over = False
 
     while is_running:
@@ -105,7 +105,10 @@ def main() -> None:
 
         # AI movement
         if not is_human_turn and not game_over:
-            move = find_random_move(legal_moves)
+            move = find_best_move(game_state, legal_moves)
+            if move is None:
+                move = find_random_move(legal_moves)
+
             game_state.execute_move(move)
             game_state_has_changed = True
             should_be_animated = True
