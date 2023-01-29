@@ -14,6 +14,7 @@ class Piece:
         self.type = type
         self.location = location
         self.image_code = f"{self.team[0]}_{self.type}"
+        self.ai_value = 0
 
     def __str__(self) -> str:
         return f"{self.team} {self.type} at {self.location}"
@@ -142,6 +143,7 @@ class Piece:
 class Pawn(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, PAWN, location)
+        self.ai_value = 1
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
@@ -192,6 +194,7 @@ class Pawn(Piece):
 class Rook(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, ROOK, location)
+        self.ai_value = 5
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
@@ -205,6 +208,7 @@ class Rook(Piece):
 class Knight(Piece):
     def __init__(self, team: str, location: tuple) -> list:
         super().__init__(team, KNIGHT, location)
+        self.ai_value = 3
 
     def knight_movement(self, start: tuple, offset: tuple, board: list) -> object:
         moves = []
@@ -238,6 +242,7 @@ class Knight(Piece):
 class Bishop(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, BISHOP, location)
+        self.ai_value = 3
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
@@ -251,6 +256,7 @@ class Bishop(Piece):
 class Queen(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, QUEEN, location)
+        self.ai_value = 10
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []

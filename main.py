@@ -92,7 +92,7 @@ def main() -> None:
                                 )
                                 if choice in possible_choices:
                                     break
-                            move.set_promotion_choice(choice)
+                            move.promotion_choice = choice
 
                         game_state.execute_move(move)
                         game_state_has_changed = True

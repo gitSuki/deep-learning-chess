@@ -39,6 +39,3 @@ class Movement:
             return True
         else:
             return False
-
-    def set_promotion_choice(self, choice: str) -> None:
-        self.promotion_choice = choice
