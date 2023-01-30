@@ -1,3 +1,4 @@
+import numpy as np
 import random
 
 from constants import *
@@ -63,8 +64,8 @@ def score_board(game_state: object) -> int:
         return STALEMATE
 
     score = 0
-    for row in range(len(game_state.board)):
-        for col in range(len(game_state.board)):
+    for row in np.arange(len(game_state.board)):
+        for col in np.arange(len(game_state.board)):
             square = game_state.board[row][col]
             if square:
                 if square.team == WHITE:
