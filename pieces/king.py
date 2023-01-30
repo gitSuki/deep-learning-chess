@@ -1,5 +1,5 @@
 from constants import *
-from movement import Movement
+from engine.movement import Movement
 from pieces.main import Piece, detect_enemy_piece
 
 

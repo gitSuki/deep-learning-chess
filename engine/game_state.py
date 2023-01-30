@@ -1,8 +1,8 @@
 import numpy as np
 
 from constants import *
-from player import Player
-from game_board import game_board
+from engine.player import Player
+from engine.board import game_board
 # piece classes are imported for handling pawn promotion
 from pieces.rook import Rook
 from pieces.knight import Knight

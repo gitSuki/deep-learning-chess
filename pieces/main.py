@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from movement import Movement
+from engine.movement import Movement
 
 
 class Piece:
