@@ -5,6 +5,9 @@ from constants import *
 
 
 def load_images() -> list:
+    """
+    Creates a dictionary, mapping every piece and color combination to it's respective image file"
+    """
     images_dict = {}
     image_list = [
         "w_pawn",
@@ -38,10 +41,13 @@ def draw_game_state(
     legal_moves: list,
     selected_square: tuple,
 ) -> None:
+    """
+    Handles all the GUI code for visually representing the current game state.
+    """
     draw_board(screen)
     draw_pieces(screen, game_state)
     highlight_squares(screen, game_state, legal_moves, selected_square)
-    highlight_last_move(screen, game_state)
+    highlight_previous_move(screen, game_state)
 
 
 def draw_board(screen: object):
@@ -102,7 +108,7 @@ def highlight_movement_options(
     screen: object, legal_moves: list, selected_square: tuple
 ) -> None:
     """
-    Highlights all valid movements the piece may make
+    Highlights all valid movements that a piece may make.
     """
     for move in legal_moves:
         color = "blue"
@@ -116,7 +122,7 @@ def highlight_individual_square(
     screen: object, color: str, square_location: tuple
 ) -> None:
     """
-    Highlights a specific individual square
+    Highlights a specific individual square.
     """
     highlight_surface = pg.Surface((SQUARE_SIZE, SQUARE_SIZE))
     highlight_surface.set_alpha(100)
@@ -128,7 +134,10 @@ def highlight_individual_square(
     screen.blit(highlight_surface, pixel_coordinates)
 
 
-def highlight_last_move(screen: object, game_state: object):
+def highlight_previous_move(screen: object, game_state: object):
+    """
+    Highlights the previous move made by the last player.
+    """
     if len(game_state.move_log) >= 1:
         highlight_individual_square(
             screen, "yellow", game_state.move_log[-1].start_square
@@ -139,6 +148,9 @@ def highlight_last_move(screen: object, game_state: object):
 
 
 def animate_move(move, game_state, screen, clock):
+    """
+    Handles all the code for animating a piece moving from one square to another.
+    """
     change_row = move.end_square[0] - move.start_square[0]
     change_col = move.end_square[1] - move.start_square[1]
     frames_per_square = 10
@@ -175,6 +187,9 @@ def animate_move(move, game_state, screen, clock):
 
 
 def draw_text(screen, victor, victory_condition):
+    """
+    Handles the code for displaying the victory or defeat conditions on the screen.
+    """
     FONT_SIZE = 40
     font = pg.font.SysFont("calibri", FONT_SIZE, True, False)
     string = f"{victor} wins by {victory_condition}!".capitalize()
