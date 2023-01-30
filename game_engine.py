@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from piece import *
+from pieces.queen import Queen
 from player import Player
 from game_board import game_board
 
