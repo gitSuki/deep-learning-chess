@@ -22,7 +22,7 @@ def main() -> None:
         False  # used to recalculate legal moves any time the board changes
     )
     white_is_player = True
-    black_is_player = True
+    black_is_player = False
     game_over = False
 
     while is_running:

@@ -30,9 +30,11 @@ class Movement:
         return debug_string
 
     def pawn_promotion(self) -> bool:
-        white_pawn_can_promote = (
-            self.moved_piece.type == PAWN and self.moved_piece.team == WHITE and self.end_square[0] == 0 )
-        black_pawn_can_promote = (
-            self.moved_piece.type == PAWN and self.moved_piece.team == BLACK and self.end_square[0] == 7
-        )
-        return white_pawn_can_promote or black_pawn_can_promote
+        if self.moved_piece:
+            white_pawn_can_promote = (
+                self.moved_piece.type == PAWN and self.moved_piece.team == WHITE and self.end_square[0] == 0 )
+            black_pawn_can_promote = (
+                self.moved_piece.type == PAWN and self.moved_piece.team == BLACK and self.end_square[0] == 7
+            )
+            return white_pawn_can_promote or black_pawn_can_promote
+        return False
