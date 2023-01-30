@@ -1,5 +1,6 @@
 from constants import *
-from pieces.main import Piece
+from pieces.main import *
+
 
 class Rook(Piece):
     def __init__(self, team: str, location: tuple) -> None:
@@ -8,8 +9,8 @@ class Rook(Piece):
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
-        moves += self.orthogonal_up(row, col, board)
-        moves += self.orthogonal_left(row, col, board)
-        moves += self.orthogonal_down(row, col, board)
-        moves += self.orthogonal_right(row, col, board)
+        moves += orthogonal_up(row, col, board, self.team)
+        moves += orthogonal_left(row, col, board, self.team)
+        moves += orthogonal_down(row, col, board, self.team)
+        moves += orthogonal_right(row, col, board, self.team)
         return moves

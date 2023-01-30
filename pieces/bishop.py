@@ -1,5 +1,6 @@
 from constants import *
-from pieces.main import Piece
+from pieces.main import *
+
 
 class Bishop(Piece):
     def __init__(self, team: str, location: tuple) -> None:
@@ -8,8 +9,8 @@ class Bishop(Piece):
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
-        moves += self.diagonal_up_left(row, col, board)
-        moves += self.diagonal_down_left(row, col, board)
-        moves += self.diagonal_down_right(row, col, board)
-        moves += self.diagonal_up_right(row, col, board)
+        moves += diagonal_up_left(row, col, board, self.team)
+        moves += diagonal_down_left(row, col, board, self.team)
+        moves += diagonal_down_right(row, col, board, self.team)
+        moves += diagonal_up_right(row, col, board, self.team)
         return moves
