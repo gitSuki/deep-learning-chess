@@ -4,7 +4,7 @@ from pieces.main import Piece, detect_enemy_piece
 
 
 class Knight(Piece):
-    def __init__(self, team: str, location: tuple) -> list:
+    def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, KNIGHT, location)
         self.ai_value = 3
 
@@ -21,7 +21,10 @@ class Knight(Piece):
         return moves
 
 
-def knight_movement(start: tuple, offset: tuple, board: list, team: str) -> object:
+def knight_movement(start: tuple, offset: tuple, board: list, team: str) -> list:
+    """
+    Generates a list of movement objects for a Knight based on a given offset. Returns an empty list if the offset is not a valid movement.
+    """
     moves = []
     end = (start[0] + offset[0], start[1] + offset[1])
     row_is_in_bounds = end[0] < len(board) and end[0] >= 0

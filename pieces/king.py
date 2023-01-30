@@ -21,7 +21,10 @@ class King(Piece):
         return moves
 
 
-def king_movement(start: tuple, offset: tuple, board: list, team: str) -> object:
+def king_movement(start: tuple, offset: tuple, board: list, team: str) -> list:
+    """
+    Generates a list of movement objects for a King based on a given offset. Returns an empty list if the offset is not a valid movement.
+    """
     moves = []
     end = (start[0] + offset[0], start[1] + offset[1])
     row_is_in_bounds = end[0] < len(board) and end[0] >= 0
