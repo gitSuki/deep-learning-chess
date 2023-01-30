@@ -1,10 +1,13 @@
 import numpy as np
 
 from constants import *
-from pieces.queen import Queen
 from player import Player
 from game_board import game_board
-
+# piece classes are imported for handling pawn promotion
+from pieces.rook import Rook
+from pieces.knight import Knight
+from pieces.bishop import Bishop
+from pieces.queen import Queen
 
 class GameState:
     """
@@ -37,13 +40,8 @@ class GameState:
         self.board[move.end_square[0]][move.end_square[1]] = move.moved_piece
         self.move_log.append(move)
         self.players[self.turn].update_piece_list(self.board)
-
-        if move.is_pawn_promotion:
-            # Automatically promotes to Queen
-            # promoted_piece = move.promotion_choice
-            team = move.moved_piece.team
-            promoted_piece = Queen(team, move.end_square)
-            self.board[move.end_square[0]][move.end_square[1]] = promoted_piece
+        if move.is_pawn_promotion and move.promotion_choice:
+            self.handle_promotion(move)
 
         self.swap_player_turn()
 
@@ -141,3 +139,9 @@ class GameState:
 
                 possible_moves += piece.get_moves(row, col, self.board)
         return possible_moves
+
+    def handle_promotion(self, move: object) -> None:
+        team = move.moved_piece.team
+        type = move.promotion_choice.capitalize()
+        promoted_piece = eval(type)(team, move.end_square)
+        self.board[move.end_square[0]][move.end_square[1]] = promoted_piece

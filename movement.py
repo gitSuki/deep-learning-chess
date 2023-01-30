@@ -1,3 +1,5 @@
+from constants import *
+
 class Movement:
     """
     Represents an individual move from a given start square to it's destination end square.
@@ -9,7 +11,7 @@ class Movement:
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
         self.is_pawn_promotion = self.pawn_promotion()
-        self.promotion_choice = "queen"
+        self.promotion_choice = None
 
     def __eq__(self, other):
         if not isinstance(other, Movement):
@@ -29,13 +31,8 @@ class Movement:
 
     def pawn_promotion(self) -> bool:
         white_pawn_can_promote = (
-            self.moved_piece == "w_pawn" and self.end_square[0] == 0
-        )
+            self.moved_piece.type == PAWN and self.moved_piece.team == WHITE and self.end_square[0] == 0 )
         black_pawn_can_promote = (
-            self.moved_piece == "b_pawn" and self.end_square[0] == 7
+            self.moved_piece.type == PAWN and self.moved_piece.team == BLACK and self.end_square[0] == 7
         )
-
-        if white_pawn_can_promote or black_pawn_can_promote:
-            return True
-        else:
-            return False
+        return white_pawn_can_promote or black_pawn_can_promote

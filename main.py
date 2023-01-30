@@ -22,7 +22,7 @@ def main() -> None:
         False  # used to recalculate legal moves any time the board changes
     )
     white_is_player = True
-    black_is_player = False
+    black_is_player = True
     game_over = False
 
     while is_running:
@@ -86,7 +86,7 @@ def main() -> None:
                     if move in legal_moves:
                         if move.is_pawn_promotion:
                             while True:
-                                possible_choices = ["queen", "rook", "bishop", "knight"]
+                                possible_choices = [ROOK, KNIGHT, BISHOP, QUEEN]
                                 choice = input(
                                     "Which piece do you want to promote to? (queen, rook, bishop, or knight)\n"
                                 )
