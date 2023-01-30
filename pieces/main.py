@@ -138,3 +138,9 @@ class Piece:
         return (enemy_piece.team == WHITE and self.team == BLACK) or (
             enemy_piece.team == BLACK and self.team == WHITE
         )
+
+
+def detect_enemy_piece(enemy_piece: tuple, team: str) -> bool:
+    return (enemy_piece.team == WHITE and team == BLACK) or (
+        enemy_piece.team == BLACK and team == WHITE
+    )
