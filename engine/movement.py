@@ -10,7 +10,7 @@ class Movement:
         self.end_square = end_square
         self.moved_piece = board[self.start_square[0]][self.start_square[1]]
         self.captured_piece = board[self.end_square[0]][self.end_square[1]]
-        self.is_pawn_promotion = self.pawn_promotion()
+        self.is_pawn_promotion = self._pawn_promotion()
         self.promotion_choice = None
 
     def __eq__(self, other):
@@ -29,7 +29,7 @@ class Movement:
             debug_string += f" Promotion choice: {self.promotion_choice}"
         return debug_string
 
-    def pawn_promotion(self) -> bool:
+    def _pawn_promotion(self) -> bool:
         if self.moved_piece:
             white_pawn_can_promote = (
                 self.moved_piece.type == PAWN and self.moved_piece.team == WHITE and self.end_square[0] == 0 )

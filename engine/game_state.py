@@ -3,11 +3,13 @@ import numpy as np
 from constants import *
 from engine.player import Player
 from engine.board import game_board
+
 # piece classes are imported for handling pawn promotion
 from pieces.rook import Rook
 from pieces.knight import Knight
 from pieces.bishop import Bishop
 from pieces.queen import Queen
+
 
 class GameState:
     """
@@ -25,12 +27,6 @@ class GameState:
         self.checkmate = False
         self.stalemate = False
 
-    def swap_player_turn(self) -> None:
-        """
-        Swaps the current player in the game between white or black.
-        """
-        self.turn = BLACK if self.turn == WHITE else WHITE
-
     def execute_move(self, move: object) -> None:
         """
         Executes the move given as an argument.
@@ -41,9 +37,9 @@ class GameState:
         self.move_log.append(move)
         self.players[self.turn].update_piece_list(self.board)
         if move.is_pawn_promotion and move.promotion_choice:
-            self.handle_promotion(move)
+            self._handle_promotion(move)
 
-        self.swap_player_turn()
+        self._swap_player_turn()
 
     def undo_move(self) -> None:
         """
@@ -57,7 +53,7 @@ class GameState:
         self.board[move.end_square[0]][move.end_square[1]] = move.captured_piece
         self.board[move.start_square[0]][move.start_square[1]] = move.moved_piece
         self.players[self.turn].update_piece_list(self.board)
-        self.swap_player_turn()
+        self._swap_player_turn()
         self.checkmate = False
         self.stalemate = False
 
@@ -65,63 +61,69 @@ class GameState:
         """
         Calculates all legal moves, accounting for checks and checkmate.
         """
-        players_possible_moves = self.get_possible_moves()
+        players_possible_moves = self._get_possible_moves()
 
         # loops through list of moves backwards to prevent bugs from occuring when deleting invalid moves
         for move in players_possible_moves[::-1]:
             # execute_move() automatically swaps player's turns, we need to reswap turns again otherwise our
             # helper methods will calculate for the wrong player
             self.execute_move(move)
-            self.swap_player_turn()
-            move_would_put_king_in_check = self.king_in_check()
+            self._swap_player_turn()
+            move_would_put_king_in_check = self._king_in_check()
             if move_would_put_king_in_check:
                 players_possible_moves.remove(move)
-            self.swap_player_turn()
+            self._swap_player_turn()
             self.undo_move()
 
         if len(players_possible_moves) == 0:
-            self.check_gameover_conditions()
+            self._check_gameover_conditions()
         return players_possible_moves
 
-    def check_gameover_conditions(self) -> None:
+    def _swap_player_turn(self) -> None:
+        """
+        Swaps the current player in the game between white or black.
+        """
+        self.turn = BLACK if self.turn == WHITE else WHITE
+
+    def _check_gameover_conditions(self) -> None:
         """
         Checks if the game is in either a checkmate or stalemate situation.
         """
-        king_is_in_check = self.king_in_check()
+        king_is_in_check = self._king_in_check()
         if king_is_in_check:
             self.checkmate = True
         else:
             self.stalemate = True
 
-    def king_in_check(self) -> bool:
+    def _king_in_check(self) -> bool:
         """
         Calculates if the current player's king is in a check situation.
         """
         if self.turn == WHITE:
             for piece in self.players[WHITE].piece_list:
                 if piece.type == KING:
-                    return self.piece_under_attack(piece)
+                    return self._piece_under_attack(piece)
         else:
             for piece in self.players[BLACK].piece_list:
                 if piece.type == KING:
-                    return self.piece_under_attack(piece)
+                    return self._piece_under_attack(piece)
 
-    def piece_under_attack(self, piece: object) -> bool:
+    def _piece_under_attack(self, piece: object) -> bool:
         """
         Calculates if the piece given as an argument could come under attack by the opponent.
         """
-        self.swap_player_turn()
-        opponents_possible_moves = self.get_possible_moves()
+        self._swap_player_turn()
+        opponents_possible_moves = self._get_possible_moves()
 
         for move in opponents_possible_moves:
             piece_is_under_attack = piece.location == move.end_square
             if piece_is_under_attack:
-                self.swap_player_turn()
+                self._swap_player_turn()
                 return True
-        self.swap_player_turn()
+        self._swap_player_turn()
         return False
 
-    def get_possible_moves(self) -> list:
+    def _get_possible_moves(self) -> list:
         """
         Calculates all potential moves, regardless of checks and checkmate.
         """
@@ -140,7 +142,7 @@ class GameState:
                 possible_moves += piece.get_moves(row, col, self.board)
         return possible_moves
 
-    def handle_promotion(self, move: object) -> None:
+    def _handle_promotion(self, move: object) -> None:
         team = move.moved_piece.team
         type = move.promotion_choice.capitalize()
         promoted_piece = eval(type)(team, move.end_square)
