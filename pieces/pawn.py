@@ -10,60 +10,48 @@ class Pawn(Piece):
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
-        if self.team == WHITE:
-            # move forward
-            if not board[row - 1][col]:
-                moves.append(Movement((row, col), (row - 1, col), board))
-                # pawns can move two squares directly forward on their first move
-                # pawns can never move backward so they will always be at their starting row
-                # if they haven't moved
-                if row == 6 and not board[row - 2][col]:
-                    moves.append(Movement((row, col), (row - 2, col), board))
-                moves += capture_left_movement((row, col), board, self.team)
-                moves += capture_right_movement((row, col), board, self.team)
-
-        if self.team == BLACK:
-            if (row + 1) < len(board):
-                # move forward
-                if not board[row + 1][col]:
-                    moves.append(Movement((row, col), (row + 1, col), board))
-                    # pawns can move two squares directly forward on their first move
-                    # pawns can never move backward so they will always be at their starting row
-                    # if they haven't moved
-                    if row == 1 and not board[row + 2][col]:
-                        moves.append(Movement((row, col), (row + 2, col), board))
-                moves += capture_left_movement((row, col), board, self.team)
-                moves += capture_right_movement((row, col), board, self.team)
+        moves += forward_movement((row, col), board, self.team)
+        moves += capture_left_movement((row, col), board, self.team)
+        moves += capture_right_movement((row, col), board, self.team)
         return moves
 
 
-def pawn_movement(start: tuple, offset: tuple, board: list, team: str) -> list:
+def forward_movement(start: tuple, board: list, team: str) -> list:
     """
-    Generates a list of movement objects for a Knight based on a given offset. Returns an empty list if the offset is not a valid movement.
+    Generates a list of forward movement objects for a Pawn. Returns an empty list if the offset is not a valid movement.
     """
     moves = []
-    end = (start[0] + offset[0], start[1] + offset[1])
-    row_is_in_bounds = end[0] < len(board) and end[0] >= 0
-    col_is_in_bounds = end[1] < len(board) and end[1] >= 0
-    if row_is_in_bounds and col_is_in_bounds:
-        square_is_occupied = board[end[0]][end[1]]
-        if not square_is_occupied:
-            moves.append(Movement(start, end, board))
-            return moves
+    forward_multiplier = -1 if team is WHITE else 1
+    row = start[0]
+    col = start[1]
+    forward_one_square = row + forward_multiplier
 
-        is_enemy = detect_enemy_piece(board[end[0]][end[1]], team)
-        if is_enemy:
-            moves.append(Movement(start, end, board))
+    is_in_bounds = forward_one_square >= 0 and forward_one_square < len(board)
+    if is_in_bounds:
+        square_is_occupied = board[forward_one_square][col]
+        if square_is_occupied:
+            return moves
+        moves.append(Movement(start, (forward_one_square, col), board))
+
+        forward_two_squres = row + (forward_multiplier * 2)
+        forward_two_squares_is_occupied = board[forward_two_squres][col]
+        is_first_move = (team == WHITE and row == 6) or (team is BLACK and row == 1)
+        can_move_two_squares = is_first_move and not forward_two_squares_is_occupied
+        if can_move_two_squares:
+            moves.append(Movement(start, (forward_two_squres, col), board))
     return moves
 
 
 def capture_left_movement(start: tuple, board: list, team: str) -> list:
+    """
+    Generates a list of movement objects for a Pawn based on if it can capture to the left on the board. Returns an empty list if the offset is not a valid movement.
+    """
     moves = []
     row = start[0] - 1 if team is WHITE else start[0] + 1
     col = start[1] - 1
 
-    in_bounds = col >= 0 and col < len(board)
-    if in_bounds:
+    is_in_bounds = col >= 0 and col < len(board)
+    if is_in_bounds:
         square_is_occupied = board[row][col]
         if square_is_occupied:
             is_enemy = detect_enemy_piece(board[row][col], team)
@@ -73,12 +61,15 @@ def capture_left_movement(start: tuple, board: list, team: str) -> list:
 
 
 def capture_right_movement(start: tuple, board: list, team: str) -> list:
+    """
+    Generates a list of movement objects for a Pawn based on if it can capture to the right on the board. Returns an empty list if the offset is not a valid movement.
+    """
     moves = []
     row = start[0] - 1 if team is WHITE else start[0] + 1
     col = start[1] + 1
 
-    in_bounds = col >= 0 and col < len(board)
-    if in_bounds:
+    is_in_bounds = col >= 0 and col < len(board)
+    if is_in_bounds:
         square_is_occupied = board[row][col]
         if square_is_occupied:
             is_enemy = detect_enemy_piece(board[row][col], team)
