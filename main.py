@@ -21,7 +21,7 @@ def main() -> None:
     game_state_has_changed = (
         False  # used to recalculate legal moves any time the board changes
     )
-    white_is_player = False
+    white_is_player = True
     black_is_player = False
     game_over = False
 

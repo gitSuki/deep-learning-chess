@@ -64,40 +64,60 @@ def find_random_move(legal_moves: list) -> object:
 def find_best_move(game_state: object, legal_moves: list):
     global next_move
     next_move = None
-    minmax(game_state, legal_moves, DEPTH, game_state.turn)
+    random.shuffle(legal_moves)
+    turn_multiplier = 1 if game_state.turn is WHITE else -1
+    negamax(game_state, legal_moves, DEPTH, turn_multiplier)
     return next_move
 
 
-def minmax(game_state: object, legal_moves: list, depth: int, turn: str):
+# def minmax(game_state: object, legal_moves: list, depth: int, turn: str):
+#     global next_move
+#     if depth == 0:
+#         return score_board(game_state)
+
+#     if game_state.turn == WHITE:
+#         max_score = -CHECKMATE
+#         for move in legal_moves:
+#             game_state.execute_move(move)
+#             next_moves = game_state.get_legal_moves()
+#             score = minmax(game_state, next_moves, depth - 1, BLACK)
+#             if score > max_score:
+#                 max_score = score
+#                 if depth == DEPTH:
+#                     next_move = move
+#             game_state.undo_move()
+#         return max_score
+
+#     elif game_state.turn == BLACK:
+#         min_score = CHECKMATE
+#         for move in legal_moves:
+#             game_state.execute_move(move)
+#             next_moves = game_state.get_legal_moves()
+#             score = minmax(game_state, next_moves, depth - 1, WHITE)
+#             if score < min_score:
+#                 min_score = score
+#                 if depth == DEPTH:
+#                     next_move = move
+#             game_state.undo_move()
+#         return min_score
+
+
+def negamax(game_state: object, legal_moves: list, depth: int, turn_multiplier: int):
     global next_move
     if depth == 0:
-        return score_board(game_state)
+        return turn_multiplier * score_board(game_state)
 
-    if game_state.turn == WHITE:
-        max_score = -CHECKMATE
-        for move in legal_moves:
-            game_state.execute_move(move)
-            next_moves = game_state.get_legal_moves()
-            score = minmax(game_state, next_moves, depth - 1, BLACK)
-            if score > max_score:
-                max_score = score
-                if depth == DEPTH:
-                    next_move = move
-            game_state.undo_move()
-        return max_score
-
-    elif game_state.turn == BLACK:
-        min_score = CHECKMATE
-        for move in legal_moves:
-            game_state.execute_move(move)
-            next_moves = game_state.get_legal_moves()
-            score = minmax(game_state, next_moves, depth - 1, WHITE)
-            if score < min_score:
-                min_score = score
-                if depth == DEPTH:
-                    next_move = move
-            game_state.undo_move()
-        return min_score
+    max_score = -CHECKMATE
+    for move in legal_moves:
+        game_state.execute_move(move)
+        opponents_moves = game_state.get_legal_moves()
+        score = -negamax(game_state, opponents_moves, depth - 1, -turn_multiplier)
+        if score > max_score:
+            max_score = score
+            if depth == DEPTH:
+                next_move = move
+        game_state.undo_move()
+    return max_score
 
 
 def score_board(game_state: object) -> int:
