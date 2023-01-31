@@ -66,7 +66,7 @@ def main() -> None:
                     game_state_has_changed = False
                     game_over = False
 
-            elif e.type == pg.MOUSEBUTTONDOWN and is_human_turn and not game_over:
+            elif e.type == pg.MOUSEBUTTONDOWN:
                 location = pg.mouse.get_pos()  # gets (x, y) location of mouse
                 row = location[1] // SQUARE_SIZE
                 col = location[0] // SQUARE_SIZE
@@ -81,7 +81,7 @@ def main() -> None:
                     select_log.append(selected_square)
 
                 user_has_clicked_movement_destination = len(select_log) == 2
-                if user_has_clicked_movement_destination:
+                if user_has_clicked_movement_destination and is_human_turn:
                     row = select_log[0]
                     col = select_log[1]
                     move = Movement(row, col, game_state.board)

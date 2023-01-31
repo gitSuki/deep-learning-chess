@@ -34,7 +34,7 @@ def forward_movement(start: tuple, board: list, team: str) -> list:
         moves.append(Movement(start, (forward_one_square, col), board))
 
         forward_two_squres = row + (forward_multiplier * 2)
-        if forward_two_squres < 8:
+        if forward_two_squres < len(board):
             forward_two_squares_is_occupied = board[forward_two_squres][col]
             is_first_move = (team == WHITE and row == 6) or (team is BLACK and row == 1)
             can_move_two_squares = is_first_move and not forward_two_squares_is_occupied
@@ -51,7 +51,7 @@ def capture_left_movement(start: tuple, board: list, team: str) -> list:
     row = start[0] - 1 if team is WHITE else start[0] + 1
     col = start[1] - 1
 
-    is_in_bounds = col >= 0 and col < len(board)
+    is_in_bounds = col >= 0 and col < len(board) and row < len(board)
     if is_in_bounds:
         square_is_occupied = board[row][col]
         if square_is_occupied:
@@ -69,7 +69,7 @@ def capture_right_movement(start: tuple, board: list, team: str) -> list:
     row = start[0] - 1 if team is WHITE else start[0] + 1
     col = start[1] + 1
 
-    is_in_bounds = col >= 0 and col < len(board)
+    is_in_bounds = col >= 0 and col < len(board) and row < len(board)
     if is_in_bounds:
         square_is_occupied = board[row][col]
         if square_is_occupied:
