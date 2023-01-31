@@ -59,7 +59,7 @@ def ab_negamax(
             max_depth,
             current_depth + 1,
             -beta,
-            -alpha,
+            -max(alpha, best_score),
         )
         current_score = -recursed_score
 
@@ -69,7 +69,6 @@ def ab_negamax(
         game_state.undo_move()
 
         # pruning out irrelevant nodes of the search tree to increase efficiency
-        best_score = max(best_score, alpha)
         if best_score >= beta:
             break
     return best_score, best_move
