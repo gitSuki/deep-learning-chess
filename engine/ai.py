@@ -23,7 +23,7 @@ def find_best_move(game_state: object, legal_moves: list):
     Calculates the best move the AI could make in the next turn.
     """
     # shuffle the move list to randomize which move the AI will make in the case there are multiple moves with the same score
-    random.shuffle(legal_moves)
+    np.random.shuffle(legal_moves)
     _, move = ab_negamax(game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
     return move
 

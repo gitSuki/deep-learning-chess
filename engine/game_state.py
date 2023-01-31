@@ -61,23 +61,23 @@ class GameState:
         """
         Calculates all legal moves, accounting for checks and checkmate.
         """
-        players_possible_moves = self._get_possible_moves()
+        moves = self._get_possible_moves()
 
         # loops through list of moves backwards to prevent bugs from occuring when deleting invalid moves
-        for move in players_possible_moves[::-1]:
+        for i in np.arange(len(moves) - 1, 0, -1):
             # execute_move() automatically swaps player's turns, we need to reswap turns again otherwise our
             # helper methods will calculate for the wrong player
-            self.execute_move(move)
+            self.execute_move(moves[i])
             self._swap_player_turn()
             move_would_put_king_in_check = self._king_in_check()
             if move_would_put_king_in_check:
-                players_possible_moves.remove(move)
+                np.delete(moves, i)
             self._swap_player_turn()
             self.undo_move()
 
-        if len(players_possible_moves) == 0:
+        if len(moves) == 0:
             self._check_gameover_conditions()
-        return players_possible_moves
+        return np.array(moves)
 
     def _swap_player_turn(self) -> None:
         """
@@ -127,7 +127,7 @@ class GameState:
         """
         Calculates all potential moves, regardless of checks and checkmate.
         """
-        possible_moves = []
+        moves = np.array([])
         for row in np.arange(len(self.board)):
             for col in np.arange(len(self.board[row])):
                 square_is_empty = self.board[row][col] == None
@@ -139,8 +139,10 @@ class GameState:
                 if piece_is_opponents:
                     continue
 
-                possible_moves += piece.get_moves(row, col, self.board)
-        return possible_moves
+                moves = np.concatenate(
+                    (moves, piece.get_moves(row, col, self.board)), axis=None
+                )
+        return moves
 
     def _handle_promotion(self, move: object) -> None:
         team = move.moved_piece.team
