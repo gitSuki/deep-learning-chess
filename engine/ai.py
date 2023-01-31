@@ -1,4 +1,5 @@
 import numpy as np
+import chess.engine as ce
 import random
 import math
 
@@ -88,8 +89,8 @@ def score_board(game_state: object) -> int:
         return 0
 
     score = 0
-    for row in np.arange(len(game_state.board)):
-        for col in np.arange(len(game_state.board)):
+    for row in np.arange(GRID_DIMENSION):
+        for col in np.arange(GRID_DIMENSION):
             square = game_state.board[row][col]
             if square:
                 if square.team == WHITE:
@@ -98,3 +99,4 @@ def score_board(game_state: object) -> int:
                     score -= square.ai_value
 
     return score * turn_multiplier
+
