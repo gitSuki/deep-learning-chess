@@ -34,11 +34,12 @@ def forward_movement(start: tuple, board: list, team: str) -> list:
         moves.append(Movement(start, (forward_one_square, col), board))
 
         forward_two_squres = row + (forward_multiplier * 2)
-        forward_two_squares_is_occupied = board[forward_two_squres][col]
-        is_first_move = (team == WHITE and row == 6) or (team is BLACK and row == 1)
-        can_move_two_squares = is_first_move and not forward_two_squares_is_occupied
-        if can_move_two_squares:
-            moves.append(Movement(start, (forward_two_squres, col), board))
+        if forward_two_squres < 8:
+            forward_two_squares_is_occupied = board[forward_two_squres][col]
+            is_first_move = (team == WHITE and row == 6) or (team is BLACK and row == 1)
+            can_move_two_squares = is_first_move and not forward_two_squares_is_occupied
+            if can_move_two_squares:
+                moves.append(Movement(start, (forward_two_squres, col), board))
     return moves
 
 

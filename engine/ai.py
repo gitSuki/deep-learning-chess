@@ -18,14 +18,16 @@ def find_random_move(legal_moves: list) -> object:
         return legal_moves[random_index]
 
 
-def find_best_move(game_state: object, legal_moves: list):
+def find_best_move(game_state: object, legal_moves: list, return_queue):
     """
     Calculates the best move the AI could make in the next turn.
     """
     # shuffle the move list to randomize which move the AI will make in the case there are multiple moves with the same score
+    global count
+    count = 0
     np.random.shuffle(legal_moves)
     _, move = ab_negamax(game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
-    return move
+    return_queue.put(move)
 
 
 def ab_negamax(
@@ -41,6 +43,9 @@ def ab_negamax(
 
     Alpha signifies the minimum score that the current player can be assured to achieve and the Beta is the maximum score that the opponent can be assured to achieve. To increase efficiency we can automatically discard all branches of the game in which Beta < Alpha, because we can reasonably assume the opponent will never make such a move.
     """
+    global count
+    count += 1
+    print(count)
     base_case = current_depth == max_depth
     if base_case:
         return score_board(game_state), None

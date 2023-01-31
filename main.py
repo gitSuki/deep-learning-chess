@@ -1,5 +1,6 @@
 import pygame as pg
 
+from multiprocessing import Process, Queue
 from constants import *
 from engine.game_state import GameState
 from gui import draw_game_state, draw_text, animate_move
@@ -23,6 +24,8 @@ def main() -> None:
     )
     white_is_player = True
     black_is_player = False
+    ai_is_thinking = False
+    move_finder_process = None
     game_over = False
 
     while is_running:
@@ -105,13 +108,23 @@ def main() -> None:
 
         # AI movement
         if not is_human_turn and not game_over:
-            move = find_best_move(game_state, legal_moves)
-            if move is None:
-                move = find_random_move(legal_moves)
+            if not ai_is_thinking:
+                ai_is_thinking = True
+                return_queue = Queue()
+                move_finder_process = Process(target=find_best_move, args=(game_state, legal_moves, return_queue))
+                move_finder_process.start()
 
-            game_state.execute_move(move)
-            game_state_has_changed = True
-            should_be_animated = True
+            if not move_finder_process.is_alive():
+                move = return_queue.get()
+
+                if move is None:
+                    # search for a random move if there were was an error with our main ai algorithm
+                    move = find_random_move(legal_moves)
+
+                game_state.execute_move(move)
+                game_state_has_changed = True
+                should_be_animated = True
+                ai_is_thinking = False
 
         if game_state_has_changed:
             if should_be_animated:
