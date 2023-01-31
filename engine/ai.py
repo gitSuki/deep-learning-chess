@@ -4,9 +4,7 @@ import math
 
 from constants import *
 
-DEPTH = 2
-CHECKMATE = 1000
-STALEMATE = 0
+MAX_DEPTH = 2
 
 
 def find_random_move(legal_moves: list) -> object:
@@ -20,11 +18,12 @@ def find_random_move(legal_moves: list) -> object:
 
 
 def find_best_move(game_state: object, legal_moves: list):
-    turn_multiplier = 1 if game_state.turn is WHITE else -1
+    """
+    Calculates the best move the AI could make in the next turn.
+    """
+    # shuffle the move list to randomize which move the AI will make in the case there are multiple moves with the same score
     random.shuffle(legal_moves)
-    score, move = ab_negamax(
-        game_state, legal_moves, DEPTH, 0, -math.inf, math.inf, turn_multiplier
-    )
+    score, move = ab_negamax(game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
     return move
 
 
@@ -35,10 +34,9 @@ def ab_negamax(
     current_depth: int,
     alpha: int,
     beta: int,
-    turn_multiplier: int,
 ):
     if current_depth == max_depth:
-        return turn_multiplier * score_board(game_state), None
+        return score_board(game_state), None
 
     best_move = None
     best_score = -math.inf
@@ -53,7 +51,6 @@ def ab_negamax(
             current_depth + 1,
             -beta,
             -alpha,
-            -turn_multiplier,
         )
         current_score = -recursed_score
 
@@ -66,7 +63,6 @@ def ab_negamax(
         best_score = max(best_score, alpha)
         if best_score >= beta:
             break
-    print(best_score, best_move)
     return best_score, best_move
 
 
@@ -74,14 +70,15 @@ def score_board(game_state: object) -> int:
     """
     Gives the current game state on the board a score
     """
+    turn_multiplier = 1 if game_state.turn is WHITE else -1
     # a positive score is good for white, negative good for black
     if game_state.checkmate:
         if game_state.turn == WHITE:
-            return -CHECKMATE  # black wins
+            return -math.inf  # black wins
         elif game_state.turn == BLACK:
-            return CHECKMATE  # white wins
+            return math.inf  # white wins
     elif game_state.stalemate:
-        return STALEMATE
+        return 0
 
     score = 0
     for row in np.arange(len(game_state.board)):
@@ -93,4 +90,4 @@ def score_board(game_state: object) -> int:
                 elif square.team == BLACK:
                     score -= square.ai_value
 
-    return score
+    return score * turn_multiplier
