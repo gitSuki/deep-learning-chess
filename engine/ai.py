@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import math
 
 from constants import *
 
@@ -10,7 +11,7 @@ STALEMATE = 0
 
 def find_random_move(legal_moves: list) -> object:
     """
-    Choses a random move from the move list given as an argument
+    Choses a random move from the move list given as an argument.
     """
     # randint is inclusive of last value
     if len(legal_moves) >= 1:
@@ -19,35 +20,54 @@ def find_random_move(legal_moves: list) -> object:
 
 
 def find_best_move(game_state: object, legal_moves: list):
-    global next_move
-    next_move = None
-    random.shuffle(legal_moves)
     turn_multiplier = 1 if game_state.turn is WHITE else -1
-    negamax(game_state, legal_moves, DEPTH, -CHECKMATE, CHECKMATE, turn_multiplier)
-    return next_move
+    random.shuffle(legal_moves)
+    score, move = ab_negamax(
+        game_state, legal_moves, DEPTH, 0, -math.inf, math.inf, turn_multiplier
+    )
+    return move
 
 
-def negamax(game_state: object, legal_moves: list, depth: int, alpha: int, beta: int, turn_multiplier: int):
-    global next_move
-    if depth == 0:
-        return turn_multiplier * score_board(game_state)
+def ab_negamax(
+    game_state: object,
+    legal_moves: list,
+    max_depth: int,
+    current_depth: int,
+    alpha: int,
+    beta: int,
+    turn_multiplier: int,
+):
+    if current_depth == max_depth:
+        return turn_multiplier * score_board(game_state), None
 
-    max_score = -CHECKMATE
+    best_move = None
+    best_score = -math.inf
+
     for move in legal_moves:
         game_state.execute_move(move)
         opponents_moves = game_state.get_legal_moves()
-        score = -negamax(game_state, opponents_moves, depth - 1, -beta, -alpha, -turn_multiplier)
-        if score > max_score:
-            max_score = score
-            if depth == DEPTH:
-                next_move = move
+        recursed_score, current_move = ab_negamax(
+            game_state,
+            opponents_moves,
+            max_depth,
+            current_depth + 1,
+            -beta,
+            -alpha,
+            -turn_multiplier,
+        )
+        current_score = -recursed_score
+
+        if current_score > best_score:
+            best_score = current_score
+            best_move = move
         game_state.undo_move()
 
         # pruning
-        max_score = max(max_score, alpha)
-        if alpha >= beta:
+        best_score = max(best_score, alpha)
+        if best_score >= beta:
             break
-    return max_score
+    print(best_score, best_move)
+    return best_score, best_move
 
 
 def score_board(game_state: object) -> int:

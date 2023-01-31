@@ -106,6 +106,7 @@ def main() -> None:
         # AI movement
         if not is_human_turn and not game_over:
             move = find_best_move(game_state, legal_moves)
+            print(move)
             if move is None:
                 move = find_random_move(legal_moves)
 
