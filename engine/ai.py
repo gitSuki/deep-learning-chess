@@ -1,5 +1,5 @@
 import numpy as np
-import chess.engine as ce
+import chess.engine
 import random
 import math
 
@@ -98,6 +98,7 @@ def score_board(game_state: object) -> int:
                 elif square.team == BLACK:
                     score -= square.ai_value
 
+    # score = stockfish_evaluation(game_state).relative.cp
     return score * turn_multiplier
 
 
@@ -136,8 +137,8 @@ def forsyth_edwards_conversion(game_state: object) -> str:
                     fen += str(blank_square_count)
                     blank_square_count = 0
                 fen += algebraic_notation_map[piece.image_code]
-
-        fen += "/"
+        if row < 7:
+            fen += "/"
 
     # active color
     if game_state.turn == WHITE:
@@ -156,6 +157,12 @@ def forsyth_edwards_conversion(game_state: object) -> str:
 
     # fullmove clock
     fen += str(len(game_state.move_log) // 2)
-
-    print(fen)
     return fen
+
+
+def stockfish_evaluation(game_state, time_limit=0.01):
+    fen = forsyth_edwards_conversion(game_state)
+    board = chess.Board(fen)
+    engine = chess.engine.SimpleEngine.popen_uci("stockfish_20011801_x64")
+    result = engine.analyse(board, chess.engine.Limit(time=time_limit))
+    return result["score"]
