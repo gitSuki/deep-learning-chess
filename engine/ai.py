@@ -100,3 +100,62 @@ def score_board(game_state: object) -> int:
 
     return score * turn_multiplier
 
+
+def forsyth_edwards_conversion(game_state: object) -> str:
+    """
+    Converts the current game state to the Forsyth-Edwards Notation which is readable by stockfish.
+    """
+    # https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+    algebraic_notation_map = {
+        "w_pawn": "P",
+        "b_pawn": "p",
+        "w_rook": "R",
+        "b_rook": "r",
+        "w_knight": "N",
+        "b_knight": "n",
+        "w_bishop": "B",
+        "b_bishop": "b",
+        "w_queen": "Q",
+        "b_queen": "q",
+        "w_king": "K",
+        "b_king": "k",
+    }
+
+    fen = ""
+    for row in np.arange(GRID_DIMENSION):
+        blank_square_count = 0
+        for col in np.arange(GRID_DIMENSION):
+            piece = game_state.board[row][col]
+            if not piece:
+                blank_square_count += 1
+                if col == 7:
+                    fen += str(blank_square_count)
+
+            else:
+                if blank_square_count > 0:
+                    fen += str(blank_square_count)
+                    blank_square_count = 0
+                fen += algebraic_notation_map[piece.image_code]
+
+        fen += "/"
+
+    # active color
+    if game_state.turn == WHITE:
+        fen += " w "
+    else:
+        fen += " b "
+
+    # castling availibility
+    fen += "- "
+
+    # en passant target square
+    fen += "- "
+
+    # halfmove clock
+    fen += "0 "
+
+    # fullmove clock
+    fen += str(len(game_state.move_log) // 2)
+
+    print(fen)
+    return fen
