@@ -169,4 +169,5 @@ def stockfish_evaluation(game_state, time_limit=0.01):
     board = chess.Board(fen)
     engine = chess.engine.SimpleEngine.popen_uci("stockfish_20011801_x64")
     result = engine.analyse(board, chess.engine.Limit(time=time_limit))
-    return result["score"]
+    engine.close()
+    return result["score"].relative.cp

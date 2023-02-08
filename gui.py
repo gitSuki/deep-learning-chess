@@ -60,7 +60,7 @@ def draw_board(screen: object):
             if location_is_even:
                 color = pg.Color("white")
             else:
-                color = pg.Color("gray")
+                color = pg.Color("burlywood4")
             pg.draw.rect(
                 screen,
                 color,
@@ -166,7 +166,7 @@ def animate_move(move, game_state, screen, clock):
         if location_is_even:
             color = pg.Color("white")
         else:
-            color = pg.Color("gray")
+            color = pg.Color("burlywood4")
         end_square = pg.Rect(
             move.end_square[1] * SQUARE_SIZE,
             move.end_square[0] * SQUARE_SIZE,
