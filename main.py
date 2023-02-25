@@ -5,7 +5,7 @@ from constants import *
 from engine.game_state import GameState
 from gui import draw_game_state, draw_text, animate_move
 from engine.movement import Movement
-from engine.ai import find_random_move, find_best_move
+from ai.negamax import find_random_move, find_best_move
 
 pg.init()
 
