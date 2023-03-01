@@ -2,8 +2,8 @@ import numpy as np
 import chess.engine
 import random
 import math
-
 from constants import *
+import torch
 
 MAX_DEPTH = 2
 
@@ -18,7 +18,7 @@ def find_random_move(legal_moves: list) -> object:
         return legal_moves[random_index]
 
 
-def find_best_move(game_state: object, legal_moves: list, return_queue):
+def find_best_move(model, game_state: object, legal_moves: list, return_queue):
     """
     Calculates the best move the AI could make in the next turn.
     """
@@ -26,17 +26,17 @@ def find_best_move(game_state: object, legal_moves: list, return_queue):
     global count
     count = 0
     np.random.shuffle(legal_moves)
-    _, move = ab_negamax(game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
-    return_queue.put(move)
+    _, move = ab_negamax(model, game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
+    return move
 
 
-def ab_negamax(
-    game_state: object,
-    legal_moves: list,
-    max_depth: int,
-    current_depth: int,
-    alpha: int,
-    beta: int,
+def ab_negamax(model,
+    game_state,
+    legal_moves,
+    max_depth,
+    current_depth,
+    alpha,
+    beta,
 ):
     """
     The Negamax algorithm is a variant on the minmax algorithm which calculates the best possible move a player could make to maximize their own position and minimize that of their opponments. Negamax simplifies this in the case of a two-player zero-sum game by using a singular score to represent the balance of power within the game. In chess, it usually means a positive score signifies a strong position for White and a negative score a strong position for Black.
@@ -45,10 +45,10 @@ def ab_negamax(
     """
     global count
     count += 1
-    print(count)
+
     base_case = current_depth == max_depth
     if base_case:
-        return score_board(game_state), None
+        return score_board(model, game_state), None
 
     # initialize values that will be bubbled up from lower in the search tree
     best_move = None
@@ -58,7 +58,7 @@ def ab_negamax(
         game_state.execute_move(move)
         opponents_moves = game_state.get_legal_moves()
 
-        recursed_score, _ = ab_negamax(
+        recursed_score, _ = ab_negamax(model,
             game_state,
             opponents_moves,
             max_depth,
@@ -76,34 +76,22 @@ def ab_negamax(
         # pruning out irrelevant nodes of the search tree to increase efficiency
         if best_score >= beta:
             break
+
     return best_score, best_move
 
 
-def score_board(game_state: object) -> int:
+
+def score_board(model, game_state: object) -> float:
     """
     Gives the current game state on the board a score
     """
     turn_multiplier = 1 if game_state.turn is WHITE else -1
-    if game_state.checkmate:
-        if game_state.turn == WHITE:
-            return -math.inf  # black wins
-        elif game_state.turn == BLACK:
-            return math.inf  # white wins
-    elif game_state.stalemate:
-        return 0
+    fen = forsyth_edwards_conversion(game_state)
+    bin = fen_to_binary_encoding(fen)
+    score = model(torch.from_numpy(bin))
+    score = score.item()
 
-    score = 0
-    for row in np.arange(GRID_DIMENSION):
-        for col in np.arange(GRID_DIMENSION):
-            square = game_state.board[row][col]
-            if square:
-                if square.team == WHITE:
-                    score += square.ai_value
-                elif square.team == BLACK:
-                    score -= square.ai_value
-
-    # score = stockfish_evaluation(game_state).relative.cp
-    return score * turn_multiplier
+    return turn_multiplier * score
 
 
 def forsyth_edwards_conversion(game_state: object) -> str:
@@ -164,10 +152,29 @@ def forsyth_edwards_conversion(game_state: object) -> str:
     return fen
 
 
-def stockfish_evaluation(game_state, time_limit=0.01):
-    fen = forsyth_edwards_conversion(game_state)
+def fen_to_binary_encoding(fen: str):
     board = chess.Board(fen)
-    engine = chess.engine.SimpleEngine.popen_uci("stockfish_20011801_x64")
-    result = engine.analyse(board, chess.engine.Limit(time=time_limit))
-    engine.close()
-    return result["score"].relative.cp
+    # get the occupied pieces on the board
+    bl, wh = board.occupied_co
+    # concatenate the arrays for the pieces
+    bitboards = np.array([
+        bl & board.pawns,
+        bl & board.knights,
+        bl & board.bishops,
+        bl & board.rooks,
+        bl & board.queens,
+        bl & board.kings,
+        wh & board.pawns,
+        wh & board.knights,
+        wh & board.bishops,
+        wh & board.rooks,
+        wh & board.queens,
+        wh & board.kings,
+    ], dtype=np.uint64)
+
+    # convert to binary encoding
+    bitboards = np.asarray(bitboards, dtype=np.uint64)[:, np.newaxis]
+    s = 8 * np.arange(7, -1, -1, dtype=np.uint64)
+    binary = (bitboards >> s).astype(np.uint8)
+    binary = np.unpackbits(binary, bitorder="little")
+    return binary.astype(np.single)

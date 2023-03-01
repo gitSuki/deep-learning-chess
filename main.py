@@ -1,16 +1,34 @@
 import pygame as pg
-
 from multiprocessing import Process, Queue
 from constants import *
 from engine.game_state import GameState
 from gui import draw_game_state, draw_text, animate_move
 from engine.movement import Movement
 from ai.negamax import find_random_move, find_best_move
+import torch
+from torch import nn
+import pytorch_lightning as pl
+from collections import OrderedDict
 
 pg.init()
 
+class EvaluationModel(pl.LightningModule):
+    def __init__(self, learning_rate=1e-3, batch_size=1024, layer_count=10):
+        super().__init__()
+        self.batch_size = batch_size
+        self.learning_rate = learning_rate
+        layers = []
+        for i in range(layer_count - 1):
+            layers.append((f"linear-{i}", nn.Linear(768, 768)))
+            layers.append((f"relu-{i}", nn.ReLU()))
+        layers.append((f"linear-{layer_count - 1}", nn.Linear(768, 1)))
+        self.seq = nn.Sequential(OrderedDict(layers))
 
-def main() -> None:
+    def forward(self, x):
+        return self.seq(x)
+
+
+def main(model) -> None:
     screen = pg.display.set_mode((BOARD_SIZE, BOARD_SIZE))
     clock = pg.time.Clock()
     game_state = GameState()
@@ -111,11 +129,9 @@ def main() -> None:
             if not ai_is_thinking:
                 ai_is_thinking = True
                 return_queue = Queue()
-                move_finder_process = Process(target=find_best_move, args=(game_state, legal_moves, return_queue))
-                move_finder_process.start()
+                return_queue = find_best_move(model, game_state, legal_moves, return_queue)
 
-            if not move_finder_process.is_alive():
-                move = return_queue.get()
+                move = return_queue
 
                 if move is None:
                     # search for a random move if there were was an error with our main ai algorithm
@@ -130,6 +146,7 @@ def main() -> None:
             if should_be_animated:
                 animate_move(game_state.move_log[-1], game_state, screen, clock)
             legal_moves = game_state.get_legal_moves()
+
             should_be_animated = False
             game_state_has_changed = False
 
@@ -149,4 +166,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    model = EvaluationModel(layer_count=2, batch_size=1024, learning_rate=1e-3)
+    model.load_state_dict(torch.load("model/chkpt.pt"))
+    model.eval()
+    main(model)
