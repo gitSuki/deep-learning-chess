@@ -18,7 +18,7 @@ def find_random_move(legal_moves: list) -> object:
         return legal_moves[random_index]
 
 
-def find_best_move(model, game_state: object, legal_moves: list, return_queue):
+def find_best_move(model, game_state: object, legal_moves: list):
     """
     Calculates the best move the AI could make in the next turn.
     """
@@ -201,4 +201,4 @@ def fen_to_binary_encoding(fen: str) -> float:
     # converts the binary values to a 1D array of individual bits
     binary = np.unpackbits(binary, bitorder="little")
     # returns a float data type to be used by the deep learning model
-    return binary.astype(np.single) 
+    return binary.astype(np.single)

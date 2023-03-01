@@ -128,10 +128,7 @@ def main(model) -> None:
         if not is_human_turn and not game_over:
             if not ai_is_thinking:
                 ai_is_thinking = True
-                return_queue = Queue()
-                return_queue = find_best_move(model, game_state, legal_moves, return_queue)
-
-                move = return_queue
+                move = find_best_move(model, game_state, legal_moves)
 
                 if move is None:
                     # search for a random move if there were was an error with our main ai algorithm
