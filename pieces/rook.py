@@ -5,7 +5,6 @@ from pieces.main import *
 class Rook(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, ROOK, location)
-        self.ai_value = 5
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []

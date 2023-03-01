@@ -14,7 +14,6 @@ class Piece:
         self.type = type
         self.location = location
         self.image_code = f"{self.team[0]}_{self.type}"
-        self.ai_value = None
 
     def __str__(self) -> str:
         return f"{self.team} {self.type} at {self.location}"

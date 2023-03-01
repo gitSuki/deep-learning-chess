@@ -6,7 +6,6 @@ from pieces.main import Piece, detect_enemy_piece
 class Knight(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, KNIGHT, location)
-        self.ai_value = 3
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []

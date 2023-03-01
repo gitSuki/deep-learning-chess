@@ -5,7 +5,6 @@ from pieces.main import *
 class Queen(Piece):
     def __init__(self, team: str, location: tuple) -> None:
         super().__init__(team, QUEEN, location)
-        self.ai_value = 10
 
     def get_moves(self, row: int, col: int, board: list) -> list:
         moves = []
