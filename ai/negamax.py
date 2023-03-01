@@ -23,8 +23,6 @@ def find_best_move(model, game_state: object, legal_moves: list, return_queue):
     Calculates the best move the AI could make in the next turn.
     """
     # shuffle the move list to randomize which move the AI will make in the case there are multiple moves with the same score
-    global count
-    count = 0
     np.random.shuffle(legal_moves)
     _, move = ab_negamax(
         model, game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf
@@ -46,9 +44,6 @@ def ab_negamax(
 
     Alpha signifies the minimum score that the current player can be assured to achieve and the Beta is the maximum score that the opponent can be assured to achieve. To increase efficiency we can automatically discard all branches of the game in which Beta < Alpha, because we can reasonably assume the opponent will never make such a move.
     """
-    global count
-    count += 1
-
     base_case = current_depth == max_depth
     if base_case:
         return score_board(model, game_state), None
@@ -86,12 +81,12 @@ def ab_negamax(
 
 def score_board(model, game_state: object) -> float:
     """
-    Gives the current game state on the board a score
+    Gives the current game state on the board a score.
     """
     turn_multiplier = 1 if game_state.turn is WHITE else -1
     fen = forsyth_edwards_conversion(game_state)
-    bin = fen_to_binary_encoding(fen)
-    score = model(torch.from_numpy(bin))
+    binary = fen_to_binary_encoding(fen)
+    score = model(torch.from_numpy(binary))
     score = score.item()
 
     return turn_multiplier * score
@@ -99,7 +94,7 @@ def score_board(model, game_state: object) -> float:
 
 def forsyth_edwards_conversion(game_state: object) -> str:
     """
-    Converts the current game state to the Forsyth-Edwards Chess Notation
+    Converts the current game state to the Forsyth-Edwards Chess Notation.
     https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     """
     algebraic_notation_map = {
@@ -141,13 +136,13 @@ def forsyth_edwards_conversion(game_state: object) -> str:
     else:
         fen += " b "
 
-    # castling availibility
+    # castling availibility (castling is not implemented)
     fen += "- "
 
-    # en passant target square
+    # en passant target square (en passant is not implemented)
     fen += "- "
 
-    # halfmove clock
+    # halfmove clock (does not need to be calculated since this function is only called by the AI)
     fen += "0 "
 
     # fullmove clock
@@ -205,5 +200,5 @@ def fen_to_binary_encoding(fen: str) -> float:
     binary = (bitboards >> shift_amounts).astype(np.uint8)
     # converts the binary values to a 1D array of individual bits
     binary = np.unpackbits(binary, bitorder="little")
-    # returns a float data type to be used by our deep learning model
+    # returns a float data type to be used by the deep learning model
     return binary.astype(np.single) 
