@@ -26,11 +26,14 @@ def find_best_move(model, game_state: object, legal_moves: list, return_queue):
     global count
     count = 0
     np.random.shuffle(legal_moves)
-    _, move = ab_negamax(model, game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf)
+    _, move = ab_negamax(
+        model, game_state, legal_moves, MAX_DEPTH, 0, -math.inf, math.inf
+    )
     return move
 
 
-def ab_negamax(model,
+def ab_negamax(
+    model,
     game_state,
     legal_moves,
     max_depth,
@@ -58,7 +61,8 @@ def ab_negamax(model,
         game_state.execute_move(move)
         opponents_moves = game_state.get_legal_moves()
 
-        recursed_score, _ = ab_negamax(model,
+        recursed_score, _ = ab_negamax(
+            model,
             game_state,
             opponents_moves,
             max_depth,
@@ -80,7 +84,6 @@ def ab_negamax(model,
     return best_score, best_move
 
 
-
 def score_board(model, game_state: object) -> float:
     """
     Gives the current game state on the board a score
@@ -96,9 +99,9 @@ def score_board(model, game_state: object) -> float:
 
 def forsyth_edwards_conversion(game_state: object) -> str:
     """
-    Converts the current game state to the Forsyth-Edwards Notation which is readable by stockfish.
+    Converts the current game state to the Forsyth-Edwards Chess Notation
+    https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     """
-    # https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     algebraic_notation_map = {
         "w_pawn": "P",
         "b_pawn": "p",
@@ -152,29 +155,55 @@ def forsyth_edwards_conversion(game_state: object) -> str:
     return fen
 
 
-def fen_to_binary_encoding(fen: str):
+def fen_to_binary_encoding(fen: str) -> float:
+    """
+    Converts a string in Forsyth-Edwards Chess Notation into binary
+    """
+    # get the bitboards for each team from the board
     board = chess.Board(fen)
-    # get the occupied pieces on the board
-    bl, wh = board.occupied_co
-    # concatenate the arrays for the pieces
-    bitboards = np.array([
-        bl & board.pawns,
-        bl & board.knights,
-        bl & board.bishops,
-        bl & board.rooks,
-        bl & board.queens,
-        bl & board.kings,
-        wh & board.pawns,
-        wh & board.knights,
-        wh & board.bishops,
-        wh & board.rooks,
-        wh & board.queens,
-        wh & board.kings,
-    ], dtype=np.uint64)
+    black_squares, white_squares = board.occupied_co
 
-    # convert to binary encoding
+    # Create the bitboards for each individual type of chess piece per team
+    b_pawn_bitboard = black_squares & board.pawns
+    b_knight_bitboard = black_squares & board.knights
+    b_bishop_bitboard = black_squares & board.bishops
+    b_rook_bitboard = black_squares & board.rooks
+    b_queen_bitboard = black_squares & board.queens
+    b_king_bitboard = black_squares & board.kings
+    w_pawn_bitboard = white_squares & board.pawns
+    w_knight_bitboard = white_squares & board.knights
+    w_bishop_bitboard = white_squares & board.bishops
+    w_rook_bitboard = white_squares & board.rooks
+    w_queen_bitboard = white_squares & board.queens
+    w_king_bitboard = white_squares & board.kings
+
+    # Combine the bitboards for each chess piece into a single array
+    bitboards = np.array(
+        [
+            b_pawn_bitboard,
+            b_knight_bitboard,
+            b_bishop_bitboard,
+            b_rook_bitboard,
+            b_queen_bitboard,
+            b_king_bitboard,
+            w_pawn_bitboard,
+            w_knight_bitboard,
+            w_bishop_bitboard,
+            w_rook_bitboard,
+            w_queen_bitboard,
+            w_king_bitboard,
+        ],
+        dtype=np.uint64,
+    )
+
+    # add a new dimension to the bitboards array to make bitwise operations simpler for conversion into binary
     bitboards = np.asarray(bitboards, dtype=np.uint64)[:, np.newaxis]
-    s = 8 * np.arange(7, -1, -1, dtype=np.uint64)
-    binary = (bitboards >> s).astype(np.uint8)
+    shift_amounts = GRID_DIMENSION * np.arange(
+        GRID_DIMENSION - 1, -1, -1, dtype=np.uint64
+    )
+    # shift the bits in the bitboards array by the shift amounts and convert to uint8 data type
+    binary = (bitboards >> shift_amounts).astype(np.uint8)
+    # converts the binary values to a 1D array of individual bits
     binary = np.unpackbits(binary, bitorder="little")
-    return binary.astype(np.single)
+    # returns a float data type to be used by our deep learning model
+    return binary.astype(np.single) 
