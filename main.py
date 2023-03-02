@@ -12,20 +12,25 @@ from collections import OrderedDict
 
 pg.init()
 
-class EvaluationModel(pl.LightningModule):
-    def __init__(self, learning_rate=1e-3, batch_size=1024, layer_count=10):
+
+class BoardEvaluationModel(pl.LightningModule):
+    def __init__(
+        self, learning_rate=1e-3, batch_size=1024, layer_count=10, binary_input_size=768
+    ):
         super().__init__()
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         layers = []
         for i in range(layer_count - 1):
-            layers.append((f"linear-{i}", nn.Linear(768, 768)))
+            layers.append(
+                (f"linear-{i}", nn.Linear(binary_input_size, binary_input_size))
+            )
             layers.append((f"relu-{i}", nn.ReLU()))
-        layers.append((f"linear-{layer_count - 1}", nn.Linear(768, 1)))
+        layers.append((f"linear-{layer_count - 1}", nn.Linear(binary_input_size, 1)))
         self.seq = nn.Sequential(OrderedDict(layers))
 
-    def forward(self, x):
-        return self.seq(x)
+    def forward(self, input_board_state):
+        return self.seq(input_board_state)
 
 
 def main(model) -> None:
@@ -166,7 +171,7 @@ if __name__ == "__main__":
     """
     The deep learning model is loaded directly into the main script to prevent having to load it repeatedly when the AI is calculating it's best move.
     """
-    model = EvaluationModel(layer_count=2, batch_size=1024, learning_rate=1e-3)
+    model = BoardEvaluationModel(layer_count=2, batch_size=1024, learning_rate=1e-3)
     model.load_state_dict(torch.load("model/chkpt.pt"))
     model.eval()
     main(model)
