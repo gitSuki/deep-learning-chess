@@ -163,6 +163,9 @@ def main(model) -> None:
 
 
 if __name__ == "__main__":
+    """
+    The deep learning model is loaded directly into the main script to prevent having to load it repeatedly when the AI is calculating it's best move.
+    """
     model = EvaluationModel(layer_count=2, batch_size=1024, learning_rate=1e-3)
     model.load_state_dict(torch.load("model/chkpt.pt"))
     model.eval()

@@ -152,7 +152,7 @@ def forsyth_edwards_conversion(game_state: object) -> str:
 
 def fen_to_binary_encoding(fen: str) -> float:
     """
-    Converts a string in Forsyth-Edwards Chess Notation into binary
+    Converts a string in Forsyth-Edwards Chess Notation into binary encoding (length of 768) which is readable by the deep learning model.
     """
     # get the bitboards for each team from the board
     board = chess.Board(fen)
