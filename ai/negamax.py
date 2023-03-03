@@ -201,4 +201,4 @@ def fen_to_binary_encoding(fen: str) -> float:
     # converts the binary values to a 1D array of individual bits
     binary = np.unpackbits(binary, bitorder="little")
     # returns a float data type to be used by the deep learning model
-    return binary.astype(np.single)
+    return binary.astype(np.float32)
