@@ -8,9 +8,9 @@
 <h3 align="center">Chess</h3>
 
   <p align="center">
-    A python Chess engine. Featuring a playable GUI, move generation & validation, and an AI powered by a Negamax algoritihm with Alpha-Beta Pruning.
+    A python Chess engine.
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Download »</strong></a>
+    Featuring a playable GUI, move generation, and an AI powered by the Negamax algorithm and a supervised Deep Learning Model.
     <br />
     <br />
   </p>
@@ -21,6 +21,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+The AI uses a [negamax algorithm with alpha beta pruning](https://en.wikipedia.org/wiki/Negamax), but only very modest depths are searched in order to keep computation times reasonable. The AI algorithm is accompanied by a Deep Learning model that was trained on the [Lichess.org database](https://database.lichess.org/) to produce a scalar value which evaluates the board and determines which player is at advantage. The value outputted by the model will be negative if black is advantage and positive if white is.
+
 ### Showcase
 ![](showcase.gif)
 
@@ -30,6 +32,7 @@
 * [Python](https://github.com/python/cpython)
 * [Pygame](https://github.com/pygame/pygame)
 * [NumPy](https://github.com/numpy/numpy)
+* [SQLite](https://github.com/sqlite/sqlite)
 * [peewee](https://github.com/coleifer/peewee)
 * [PyTorch](https://github.com/pytorch/pytorch)
 * [Lightning](https://github.com/Lightning-AI/lightning)
