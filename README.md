@@ -21,15 +21,18 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-To do
-
+### Showcase
+![](showcase.gif)
 
 
 ### Built With
 
 * [Python](https://github.com/python/cpython)
-* [pygame](https://github.com/pygame/pygame)
-* [numpy](https://github.com/numpy/numpy)
+* [Pygame](https://github.com/pygame/pygame)
+* [NumPy](https://github.com/numpy/numpy)
+* [peewee](https://github.com/coleifer/peewee)
+* [PyTorch](https://github.com/pytorch/pytorch)
+* [Lightning](https://github.com/Lightning-AI/lightning)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -50,7 +53,12 @@ To do
    ```
 2. Install packages
    ```sh
-   pip install requirements.txt
+   pip install -r requirements.txt
+   ```
+   
+3. Run main.py
+   ```sh
+   python3 main.py
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
